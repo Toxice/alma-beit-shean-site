@@ -1,0 +1,503 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>עלמה – בית שאן</title>
+<meta name="description" content="עלמה – 2 יחידות אירוח בבית שאן, כל יחידה עם 2 חדרי שינה, סלון ומרפסת, בלב עמק המעיינות." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --background: 30 25% 94%;
+    --foreground: 25 30% 15%;
+    --card: 30 20% 90%;
+    --card-foreground: 25 30% 15%;
+    --muted: 30 15% 85%;
+    --muted-foreground: 25 20% 38%;
+    --primary: 25 65% 45%;
+    --primary-foreground: 30 25% 98%;
+    --accent: 25 70% 55%;
+    --border: 25 20% 78%;
+    --border-strong: 25 25% 60%;
+    --radius: 1rem;
+
+    --gradient-gold: linear-gradient(135deg, hsl(35 30% 62%) 0%, hsl(30 25% 48%) 50%, hsl(35 30% 62%) 100%);
+    --gradient-hero-overlay: linear-gradient(180deg, hsla(25,30%,12%,.15) 0%, hsla(25,30%,12%,.55) 60%, hsl(30 25% 94%) 100%);
+    --shadow-gold: 0 0 50px hsla(35,30%,55%,.22);
+    --shadow-card: 0 18px 36px -12px hsla(25,30%,20%,.16);
+
+    --font-heading: "Secular One", "Segoe UI", sans-serif;
+    --font-body: "Rubik", "Segoe UI", sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;direction:rtl;}
+  body{
+    margin:0;
+    background:hsl(var(--background));
+    color:hsl(var(--foreground));
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    direction:rtl;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:var(--font-heading);font-weight:400;text-wrap:balance;margin:0;}
+  .wrap{width:100%;max-width:1120px;margin-inline:auto;padding-inline:20px;}
+  section{padding-block:clamp(2.5rem,6vw,4.5rem);}
+
+  .brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;}
+  .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px hsl(var(--background)), 0 0 0 3px #000;}
+  .brand span{font-family:var(--font-heading);font-size:1.15rem;letter-spacing:.02em;color:hsl(var(--foreground));}
+  footer .brand img{width:54px;height:54px;}
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:min(88vh, 720px);
+    display:flex;align-items:flex-end;
+    background:#000 url("images/new_background.jpg") center/cover no-repeat;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background:var(--gradient-hero-overlay);
+  }
+  .hero .wrap{position:relative;z-index:1;padding-block:clamp(2rem,7vw,4rem);}
+  .hero-logo{
+    display:block;
+    width:min(320px, 62vw);
+    margin-inline:auto;
+    margin-bottom:1.3rem;
+    filter:drop-shadow(0 6px 22px hsla(25,30%,8%,.55));
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:.5rem;
+    color:#000;
+    background:#EFE9E3;
+    padding:.35rem .8rem;border-radius:999px;
+    font-size:.85rem;font-weight:600;letter-spacing:.02em;
+    margin-bottom:1.1rem;
+  }
+  .hero h1{
+    color:#fff;
+    font-size:clamp(2.1rem,5.2vw,3.4rem);
+    line-height:1.15;
+    text-shadow:0 2px 24px hsla(25,30%,10%,.45);
+  }
+  .hero p{
+    color:hsl(30 20% 92%);
+    font-size:clamp(1.02rem,2vw,1.2rem);
+    max-width:46ch;
+    margin-block-start:1rem;
+  }
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:.85rem;margin-block-start:1.8rem;}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:.55rem;
+    padding:.85rem 1.5rem;border-radius:999px;
+    font-weight:700;font-size:1rem;
+    text-decoration:none;border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn svg{width:19px;height:19px;flex:none;}
+  .btn-primary{
+    background:#EFE9E3;
+    color:#000;
+    box-shadow:var(--shadow-card);
+  }
+  .btn-ghost{
+    background:hsla(30,25%,96%,.12);
+    color:#fff;
+    border-color:hsla(30,25%,96%,.55);
+  }
+  .btn:hover{transform:translateY(-2px);}
+  @media (prefers-reduced-motion:reduce){
+    .btn:hover{transform:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- trust strip ---------- */
+  .facts{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:hsl(var(--border));
+    border-block:1px solid hsl(var(--border));
+  }
+  .fact{
+    background:hsl(var(--background));
+    padding:1.4rem 1rem;text-align:center;
+  }
+  .fact strong{display:block;font-family:var(--font-heading);font-size:1.9rem;color:#000;font-weight:700;}
+  .fact span{font-size:1rem;color:hsl(var(--muted-foreground));font-weight:700;}
+  @media (max-width:700px){ .facts{grid-template-columns:repeat(3,1fr);} }
+
+  /* ---------- section heading ---------- */
+  .section-head{max-width:60ch;margin-bottom:2.2rem;}
+  .kicker{
+    display:block;color:hsl(var(--primary));font-weight:700;
+    font-size:.82rem;letter-spacing:.09em;text-transform:uppercase;
+    margin-bottom:.5rem;
+  }
+  .section-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);}
+  .section-head p{color:hsl(var(--muted-foreground));margin-block-start:.6rem;font-size:1.02rem;}
+
+  /* ---------- features ---------- */
+  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;}
+  .feature{
+    background:hsl(var(--card));
+    border:1px solid hsl(var(--border));
+    border-radius:var(--radius);
+    padding:1.4rem;
+  }
+  .feature .ico{
+    width:42px;height:42px;border-radius:12px;
+    background:var(--gradient-gold);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:.9rem;
+  }
+  .feature .ico svg{width:22px;height:22px;color:hsl(var(--primary-foreground));}
+  .feature h3{font-size:1.08rem;font-family:var(--font-body);font-weight:700;margin-bottom:.35rem;}
+  .feature p{color:hsl(var(--muted-foreground));font-size:.94rem;margin:0;}
+  @media (max-width:820px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .feature-grid{grid-template-columns:1fr;} }
+
+  /* ---------- gallery ---------- */
+  .gal-group{margin-bottom:2rem;}
+  .gal-group h3{
+    font-family:var(--font-body);font-weight:700;font-size:1rem;
+    color:hsl(var(--muted-foreground));
+    margin-bottom:.8rem;
+    text-align:center;
+  }
+  .carousel{position:relative;width:100%;max-width:640px;margin-inline:auto;}
+  .carousel-viewport{
+    overflow:hidden;border-radius:.65rem;
+    border:1px solid hsl(var(--border));
+    aspect-ratio:4/3;background:hsl(var(--muted));
+  }
+  .carousel-track{
+    display:flex;height:100%;direction:ltr;
+    transition:transform .4s ease;
+  }
+  .carousel-track img{
+    flex:0 0 100%;width:100%;height:100%;object-fit:cover;
+  }
+  .car-btn{
+    position:absolute;top:50%;translate:0 -50%;
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:hsla(30,25%,98%,.92);
+    border:1px solid hsl(var(--border));
+    color:hsl(var(--foreground));
+    cursor:pointer;
+    box-shadow:0 4px 14px hsla(25,30%,15%,.2);
+  }
+  .car-btn:hover{background:hsl(var(--background));}
+  .car-btn svg{width:20px;height:20px;}
+  .car-prev{left:.6rem;}
+  .car-next{right:.6rem;}
+  .car-counter{
+    position:absolute;bottom:.6rem;left:50%;translate:-50% 0;
+    background:hsla(25,30%,12%,.6);color:#fff;
+    font-size:.78rem;font-weight:600;
+    padding:.25rem .65rem;border-radius:999px;
+    font-variant-numeric:tabular-nums;
+    direction:ltr;
+  }
+  @media (prefers-reduced-motion:reduce){ .carousel-track{transition:none;} }
+
+  /* ---------- attractions ---------- */
+  .attractions{display:flex;flex-wrap:wrap;justify-content:center;gap:1.2rem;}
+  .attraction{
+    flex:1 1 300px;
+    max-width:calc(33.333% - .8rem);
+    border-radius:var(--radius);
+    padding:1.4rem;
+    background:#EFE9E3;
+    color:hsl(var(--foreground));
+  }
+  .attraction h3{font-family:var(--font-heading);font-weight:400;font-size:1.2rem;margin-bottom:.4rem;text-align:center;}
+  .attraction img{width:100%;height:140px;object-fit:cover;border-radius:.6rem;margin-block:.6rem;}
+  .attraction p{margin:0;font-size:.92rem;opacity:.92;text-align:center;}
+  @media (max-width:820px){ .attraction{max-width:100%;} }
+
+  /* ---------- faq ---------- */
+  .faq{max-width:760px;}
+  .faq-item{
+    border-bottom:1px solid hsl(var(--border));
+    padding-block:1.1rem;
+  }
+  .faq-item h3{font-family:var(--font-body);font-weight:700;font-size:1.2rem;margin-bottom:.4rem;}
+  .faq-item p{margin:0;color:hsl(var(--muted-foreground));font-size:1.05rem;}
+
+  /* ---------- final cta ---------- */
+  .cta-band{
+    background:#EFE9E3;
+    color:#000;
+    border-radius:var(--radius);
+    padding:clamp(2rem,5vw,3rem);
+    text-align:center;
+    box-shadow:var(--shadow-card);
+  }
+  .cta-band h2{color:#000;font-size:clamp(1.6rem,4vw,2.2rem);}
+  .cta-band p{opacity:.92;max-width:46ch;margin:.7rem auto 0;}
+  .cta-band .hero-ctas{justify-content:center;margin-block-start:1.6rem;}
+  .cta-band .btn-ghost{border-color:hsla(25,20%,45%,.4);color:#000;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid hsl(var(--border));
+    padding-block:1.6rem;
+    text-align:center;
+    color:hsl(var(--muted-foreground));
+    font-size:.88rem;
+  }
+  footer .brand{justify-content:center;margin-bottom:.6rem;}
+  footer .foot-links{display:flex;justify-content:center;gap:1rem;margin-top:.5rem;}
+  footer a{text-decoration:none;font-weight:600;color:#000;}
+</style>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <img class="hero-logo" src="images/alma-icon.png" alt="עלמה – מתחם יחידות אירוח" />
+      <span class="hero-eyebrow">בית שאן · עמק המעיינות</span>
+      <h1>מתחם יחידות אירוח – עלמה | בית שאן<br>חופשה רגועה בלב עמק המעיינות</h1>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://wa.me/972506533940?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%9E%D7%AA%D7%97%D7%9D%20%D7%99%D7%97%D7%99%D7%93%D7%95%D7%AA%20%D7%90%D7%99%D7%A8%D7%95%D7%97%20-%20%D7%A2%D7%9C%D7%9E%D7%94%20%7C%20%D7%91%D7%99%D7%AA%20%D7%A9%D7%90%D7%9F" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.868-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.52 3.449C12.831-3.984.106 3.847.101 12.5c0 2.312.605 4.567 1.756 6.556L0 24l5.104-1.834a11.937 11.937 0 0 0 6.998 2.242h.005c8.402 0 15.246-6.844 15.25-15.25a15.19 15.19 0 0 0-4.837-11.71zM11.99 22.13a10.02 10.02 0 0 1-5.106-1.398l-.366-.217-3.82 1.373 1.386-3.72-.238-.383a10.03 10.03 0 0 1-1.543-5.35c0-5.532 4.51-10.041 10.052-10.041 2.688 0 5.213 1.048 7.11 2.947a9.992 9.992 0 0 1 2.94 7.104c-.003 5.532-4.513 10.037-10.05 10.037z"/></svg>
+          לתאם עכשיו בוואטסאפ
+        </a>
+        <a class="btn btn-ghost" href="tel:+972506533940" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          050-653-3940
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="facts">
+    <div class="fact"><strong>2</strong><span>יחידות אירוח</span></div>
+    <div class="fact"><strong>2</strong><span>חדרי שינה ליחידה</span></div>
+    <div class="fact"><strong>1</strong><span>מרפסת פרטית ליחידה</span></div>
+  </div>
+
+  <section class="wrap">
+    <div class="section-head">
+      <span class="kicker" style="font-size:clamp(1.6rem,3.4vw,2.3rem);color:#000;">מה מחכה לכם</span>
+      <h2>הכל מוכן, אתם רק צריכים להגיע</h2>
+      <p>כל יחידה מרוהטת ומצוידת בקפידה, כדי שהחופשה תתחיל מהרגע שנכנסים בדלת.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h20M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9M8 21V9m8 12V9M2 9l4-6h12l4 6"/></svg></div>
+        <h3>מטבח מאובזר</h3>
+        <p>מקרר, מיקרוגל, קומקום, פינת אוכל, כירה חשמלית וכלים לבישול — כל מה שצריך כדי לבשל בלי לצאת מהיחידה.</p>
+      </div>
+      <div class="feature">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        <h3>סלון ומיזוג בכל חדר</h3>
+        <p>סלון מרווח, טלוויזיה חכמה, WiFi בחינם, ומיזוג אוויר בכל חדר לנוחות בכל עונה.</p>
+      </div>
+      <div class="feature">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 12a9 9 0 0 1 18 0M3 12a9 9 0 0 0 18 0M12 3v18"/></svg></div>
+        <h3>מרפסת פרטית</h3>
+        <p>פינת ישיבה פרטית עם נוף פתוח ופינת מנגל.<br>מושלם לקפה של הבוקר או כוס יין בערב.</p>
+      </div>
+      <div class="feature">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>מתאים למשפחות וזוגות</h3>
+        <p>ניתן להשכיר את כל המתחם לקבוצות ומשפחות גדולות.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <h2>הצצה פנימה</h2>
+    </div>
+
+    <div class="gal-group">
+      <h3>פנים הבית</h3>
+      <div class="carousel" data-carousel>
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            <img src="images/living-room-1.jpg" alt="סלון יחידה א׳" />
+            <img src="images/living-room-2.jpg" alt="סלון יחידה ב׳" />
+            <img src="images/dining-nook.jpg" alt="פינת אוכל פנימית" />
+            <img src="images/kitchen.jpg" alt="מטבח מאובזר" />
+          </div>
+        </div>
+        <button type="button" class="car-btn car-prev" data-car-prev aria-label="התמונה הקודמת"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button type="button" class="car-btn car-next" data-car-next aria-label="התמונה הבאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="car-counter" data-car-counter>1 / 4</div>
+      </div>
+    </div>
+
+    <div class="gal-group">
+      <h3>חדרי שינה</h3>
+      <div class="carousel" data-carousel>
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            <img src="images/bedroom-1.jpg" alt="חדר שינה זוגי, יחידה א׳" />
+            <img src="images/bedroom-2.jpg" alt="חדר שינה זוגי, יחידה ב׳" />
+            <img src="images/bedroom-2-evening.jpg" alt="חדר שינה זוגי בתאורת ערב" />
+            <img src="images/bedroom-twin.jpg" alt="חדר שינה עם שתי מיטות יחיד" />
+          </div>
+        </div>
+        <button type="button" class="car-btn car-prev" data-car-prev aria-label="התמונה הקודמת"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button type="button" class="car-btn car-next" data-car-next aria-label="התמונה הבאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="car-counter" data-car-counter>1 / 4</div>
+      </div>
+    </div>
+
+    <div class="gal-group">
+      <h3>חדרי רחצה</h3>
+      <div class="carousel" data-carousel>
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            <img src="images/bathroom-1.jpg" alt="חדר רחצה עם כיור עומד ומראה זהב" />
+            <img src="images/bathroom-2.jpg" alt="חדר רחצה עם מקלחת גשם" />
+            <img src="images/bathroom-3.jpg" alt="חדר רחצה, יחידה ב׳" />
+            <img src="images/bathroom-4.jpg" alt="כיור וחדר רחצה מעוצב" />
+          </div>
+        </div>
+        <button type="button" class="car-btn car-prev" data-car-prev aria-label="התמונה הקודמת"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button type="button" class="car-btn car-next" data-car-next aria-label="התמונה הבאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="car-counter" data-car-counter>1 / 4</div>
+      </div>
+    </div>
+
+    <div class="gal-group">
+      <h3>בחוץ</h3>
+      <div class="carousel" data-carousel>
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            <img src="images/terrace-dining.jpg" alt="פינת ישיבה משותפת בחצר, שולחן עץ ארוך" />
+            <img src="images/balcony.jpg" alt="מרפסת פרטית עם נוף פתוח" />
+            <img src="images/welcome-tray.jpg" alt="מגש קבלת פנים — פירות ויין" />
+          </div>
+        </div>
+        <button type="button" class="car-btn car-prev" data-car-prev aria-label="התמונה הקודמת"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button type="button" class="car-btn car-next" data-car-next aria-label="התמונה הבאה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        <div class="car-counter" data-car-counter>1 / 3</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <span class="kicker" style="font-size:clamp(1.6rem,3.4vw,2.3rem);color:#000;">מה מסביב</span>
+      <h2>עמק המעיינות בהישג יד</h2>
+      <p>עלמה יושבת בבית שאן, ממש בפתח האתרים המוכרים באזור.</p>
+    </div>
+    <div class="attractions">
+      <div class="attraction">
+        <h3>גן השלושה (סחנה)</h3>
+        <img src="images/gan-hashlosha.jpg" alt="גן השלושה (הסחנה)" />
+        <p>בריכות טבעיות ומעיינות זורמים — יעד קלאסי לבילוי יום שלם עם המשפחה.</p>
+      </div>
+      <div class="attraction">
+        <h3>גן לאומי בית שאן</h3>
+        <img src="images/beit-shean-park.jpg" alt="גן לאומי בית שאן" />
+        <p>העיר הרומית-ביזנטית המשוחזרת, מהאתרים המרשימים בישראל.</p>
+      </div>
+      <div class="attraction">
+        <h3>הגלבוע</h3>
+        <img src="images/gilboa.jpg" alt="הגלבוע" />
+        <p>מסלולי טיול ותצפיות אל עמק המעיינות, לא רחוק מהמתחם.</p>
+      </div>
+      <div class="attraction">
+        <h3>גן גורו</h3>
+        <img src="images/gan-guru.jpg" alt="גן גורו" />
+        <p>פארק אוסטרלי ייחודי עם קנגורו חופשיים, בעלי חיים נדירים ומבוך דינוזאורים — כיף לכל המשפחה, בקיבוץ ניר דוד.</p>
+      </div>
+      <div class="attraction">
+        <h3>עין שוקק</h3>
+        <img src="images/ein-shokek.jpg" alt="עין שוקק" />
+        <p>מעיין צלול ובריכה טבעית בעומק כ-1.5 מ׳ — חלק ממסלול פארק המעיינות, מושלם לרענון קליל.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="section-head">
+      <span class="kicker" style="font-size:clamp(1.6rem,3.4vw,2.3rem);color:hsl(var(--foreground));">שאלות נפוצות</span>
+      <h2>כדאי לדעת לפני שמזמינים</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item">
+        <h3>כמה יחידות יש, ומה יש בכל אחת?</h3>
+        <p>יש 2 יחידות אירוח נפרדות. בכל יחידה 2 חדרי שינה, סלון, מטבח מאובזר, חדר רחצה ומרפסת פרטית.</p>
+      </div>
+      <div class="faq-item">
+        <h3>יש בריכה?</h3>
+        <p>ביחידות עצמן אין בריכה, אך המקום קרוב לבריכות הטבעיות של גן השלושה (סחנה).</p>
+      </div>
+      <div class="faq-item">
+        <h3>איך מזמינים?</h3>
+        <p>הכי פשוט בוואטסאפ בלחיצה אחת, או בטלפון למספר 050-653-3940 — נשמח לתאם ולענות על כל שאלה.</p>
+      </div>
+      <div class="faq-item">
+        <h3>איפה זה בדיוק?</h3>
+        <p>בבית שאן, בלב עמק המעיינות — פרטי ההגעה המדויקים נשלחים לאחר התיאום.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="cta-band">
+      <h2>מוכנים לחופשה בעלמה?</h2>
+      <p>השאירו הודעה בוואטסאפ או התקשרו — נשמח לעזור לבחור את היחידה המתאימה לכם.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" style="background:hsl(30 25% 98%);color:#000;box-shadow:none;" href="https://wa.me/972506533940?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%9E%D7%AA%D7%97%D7%9D%20%D7%99%D7%97%D7%99%D7%93%D7%95%D7%AA%20%D7%90%D7%99%D7%A8%D7%95%D7%97%20-%20%D7%A2%D7%9C%D7%9E%D7%94%20%7C%20%D7%91%D7%99%D7%AA%20%D7%A9%D7%90%D7%9F" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.868-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.52 3.449C12.831-3.984.106 3.847.101 12.5c0 2.312.605 4.567 1.756 6.556L0 24l5.104-1.834a11.937 11.937 0 0 0 6.998 2.242h.005c8.402 0 15.246-6.844 15.25-15.25a15.19 15.19 0 0 0-4.837-11.71zM11.99 22.13a10.02 10.02 0 0 1-5.106-1.398l-.366-.217-3.82 1.373 1.386-3.72-.238-.383a10.03 10.03 0 0 1-1.543-5.35c0-5.532 4.51-10.041 10.052-10.041 2.688 0 5.213 1.048 7.11 2.947a9.992 9.992 0 0 1 2.94 7.104c-.003 5.532-4.513 10.037-10.05 10.037z"/></svg>
+          לתאם בוואטסאפ
+        </a>
+        <a class="btn btn-ghost" href="tel:+972506533940" target="_blank">050-653-3940</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="brand" href="#top">
+    <img src="logo.jpg" alt="עלמה" />
+    <span>עלמה — בית שאן</span>
+  </a>
+  <div>מתחם יחידות אירוח בבית שאן ועמק המעיינות</div>
+  <div class="foot-links">
+    <a href="https://wa.me/972506533940?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%9C%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%9E%D7%AA%D7%97%D7%9D%20%D7%99%D7%97%D7%99%D7%93%D7%95%D7%AA%20%D7%90%D7%99%D7%A8%D7%95%D7%97%20-%20%D7%A2%D7%9C%D7%9E%D7%94%20%7C%20%D7%91%D7%99%D7%AA%20%D7%A9%D7%90%D7%9F">וואטסאפ</a>
+    <a href="tel:+972506533940" target="_blank">050-653-3940</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  document.querySelectorAll('[data-carousel]').forEach(function (car) {
+    var track = car.querySelector('.carousel-track');
+    var slides = track.querySelectorAll('img');
+    var prevBtn = car.querySelector('[data-car-prev]');
+    var nextBtn = car.querySelector('[data-car-next]');
+    var counter = car.querySelector('[data-car-counter]');
+    var total = slides.length;
+    var index = 0;
+
+    function render() {
+      track.style.transform = 'translateX(-' + (index * 100) + '%)';
+      if (counter) counter.textContent = (index + 1) + ' / ' + total;
+    }
+    prevBtn.addEventListener('click', function () {
+      index = (index - 1 + total) % total;
+      render();
+    });
+    nextBtn.addEventListener('click', function () {
+      index = (index + 1) % total;
+      render();
+    });
+    render();
+  });
+})();
+</script>
+
+</body></html>

@@ -250,8 +250,28 @@ footer .brand{justify-content:center;margin-bottom:.6rem;}
 footer .foot-links{display:flex;justify-content:center;gap:1rem;margin-top:.5rem;}
 footer a{text-decoration:none;font-weight:600;color:#000;}
 
+/* ---------- floating WhatsApp button ---------- */
+.wa-float{position:fixed;bottom:20px;left:20px;z-index:999;display:block;text-decoration:none;}
+.wa-float-wrap{position:relative;width:60px;height:60px;}
+.wa-float-glow{position:absolute;inset:0;border-radius:50%;background:#25D366;filter:blur(14px);opacity:.55;transition:opacity .25s ease;}
+.wa-float:hover .wa-float-glow{opacity:.8;}
+.wa-float-ring{position:absolute;inset:0;border-radius:50%;border:2px solid #25D366;animation:wa-ping 2s cubic-bezier(0,0,.2,1) infinite;}
+.wa-float-btn{position:relative;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px hsla(25,30%,10%,.35);transition:transform .25s ease, box-shadow .25s ease;}
+.wa-float-btn svg{width:30px;height:30px;color:#fff;}
+.wa-float:hover .wa-float-btn{transform:scale(1.08);box-shadow:0 14px 36px hsla(25,30%,10%,.4);}
+@keyframes wa-ping{0%{transform:scale(1);opacity:.6;}75%,100%{transform:scale(1.7);opacity:0;}}
+@media (max-width:480px){
+  .wa-float{bottom:16px;left:16px;}
+  .wa-float-wrap{width:52px;height:52px;}
+  .wa-float-btn svg{width:26px;height:26px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .wa-float-ring{animation:none;}
+  .wa-float:hover .wa-float-btn{transform:none;}
+}
+
 /* ---------- accessibility widget ---------- */
-.a11y-widget{position:fixed;bottom:20px;left:20px;z-index:999;}
+.a11y-widget{position:fixed;bottom:20px;right:20px;z-index:999;}
 .a11y-toggle{
   width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
   background:hsl(var(--primary));color:hsl(var(--primary-foreground));
@@ -259,7 +279,7 @@ footer a{text-decoration:none;font-weight:600;color:#000;}
 }
 .a11y-toggle svg{width:28px;height:28px;}
 .a11y-panel{
-  position:absolute;bottom:62px;left:0;
+  position:absolute;bottom:62px;right:0;
   background:hsl(var(--card));color:hsl(var(--card-foreground));
   border:1px solid hsl(var(--border));border-radius:var(--radius);
   box-shadow:var(--shadow-card);padding:.5rem;

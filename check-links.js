@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const root = __dirname;
+const root = path.join(__dirname, "site");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 
 const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map((m) => m[1]);

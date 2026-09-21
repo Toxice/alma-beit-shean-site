@@ -94,6 +94,7 @@ footer .brand img{width:54px;height:54px;}
   transition:transform .18s ease, box-shadow .18s ease;
 }
 .btn svg{width:19px;height:19px;flex:none;}
+.btn .wa-icon{width:19px;height:19px;flex:none;object-fit:contain;}
 .btn-primary{
   background:#EFE9E3;
   color:#000;

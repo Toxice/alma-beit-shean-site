@@ -248,3 +248,31 @@ footer{
 footer .brand{justify-content:center;margin-bottom:.6rem;}
 footer .foot-links{display:flex;justify-content:center;gap:1rem;margin-top:.5rem;}
 footer a{text-decoration:none;font-weight:600;color:#000;}
+
+/* ---------- accessibility widget ---------- */
+.a11y-widget{position:fixed;bottom:20px;left:20px;z-index:999;}
+.a11y-toggle{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:hsl(var(--primary));color:hsl(var(--primary-foreground));
+  box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;
+}
+.a11y-toggle svg{width:28px;height:28px;}
+.a11y-panel{
+  position:absolute;bottom:62px;left:0;
+  background:hsl(var(--card));color:hsl(var(--card-foreground));
+  border:1px solid hsl(var(--border));border-radius:var(--radius);
+  box-shadow:var(--shadow-card);padding:.5rem;
+  display:flex;flex-direction:column;gap:.25rem;min-width:200px;
+}
+.a11y-panel button{
+  text-align:right;background:none;border:none;cursor:pointer;
+  padding:.55rem .7rem;border-radius:.5rem;font:inherit;color:inherit;
+}
+.a11y-panel button:hover,.a11y-panel button:focus-visible{background:hsl(var(--muted));}
+
+html.a11y-contrast{filter:contrast(1.25);}
+html.a11y-grayscale{filter:grayscale(1);}
+html.a11y-underline a{text-decoration:underline!important;}
+html.a11y-font-1 body{font-size:16px;}
+html.a11y-font-2 body{font-size:18px;}
+html.a11y-font-3 body{font-size:20px;}

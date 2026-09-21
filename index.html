@@ -213,6 +213,20 @@
 
 </main>
 
+<div class="a11y-widget">
+  <button type="button" class="a11y-toggle" id="a11yToggle" aria-expanded="false" aria-controls="a11yPanel" aria-label="תפריט נגישות">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="4" r="2"/><path d="M12 7c-1.1 0-2 .9-2 2v4.5L6.5 15l1 1.9L11 15v6h2v-6l3.5 1.9 1-1.9L14 13.5V9c0-1.1-.9-2-2-2z"/></svg>
+  </button>
+  <div class="a11y-panel" id="a11yPanel" role="menu" aria-label="אפשרויות נגישות" hidden>
+    <button type="button" role="menuitem" data-a11y="font-up">הגדלת טקסט A+</button>
+    <button type="button" role="menuitem" data-a11y="font-down">הקטנת טקסט A-</button>
+    <button type="button" role="menuitem" data-a11y="contrast">ניגודיות גבוהה</button>
+    <button type="button" role="menuitem" data-a11y="grayscale">גווני אפור</button>
+    <button type="button" role="menuitem" data-a11y="underline">הדגשת קישורים</button>
+    <button type="button" role="menuitem" data-a11y="reset">איפוס תצוגה</button>
+  </div>
+</div>
+
 <footer>
   <a class="brand" href="#top">
     <img src="logo.jpg" alt="עלמה" />

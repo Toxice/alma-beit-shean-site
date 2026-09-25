@@ -14,7 +14,7 @@
 
 - The old `django-major-update` branch (Django CMS) was deleted on 2026-09-25; this plan builds on master's static site. Its leftover untracked folders were deleted too.
 - `git push` from this machine failed on 2026-09-25 (credentials are for GitHub user `ben-bershit`, no write access to `Toxice/alma-beit-shean-site`). Fix credentials before Task 5.
-- The repo root holds many **untracked** files, including a note containing an admin password (`סיסמה לפאנל אדמין של האתר.md`). **Never use `git add -A` / `git add .`** — only the explicit paths listed in each commit step.
+- The repo root holds many **untracked** files (screenshots, notes). **Never use `git add -A` / `git add .`** — only the explicit paths listed in each commit step.
 
 ## Global Constraints
 

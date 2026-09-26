@@ -89,6 +89,9 @@ class ReviewsApiTests(TestCase):
         response = self.client.get(reverse("reviews:api"))
         self.assertEqual(response["Access-Control-Allow-Origin"], "https://alma-hosting.co.il")
 
+    def test_not_cached_so_approval_shows_immediately(self):
+        self.assertEqual(self.client.get(reverse("reviews:api"))["Cache-Control"], "no-cache")
+
     def test_post_not_allowed(self):
         self.assertEqual(self.client.post(reverse("reviews:api")).status_code, 405)
 
@@ -98,6 +101,7 @@ class WriteReviewTests(TestCase):
         response = self.client.get(reverse("reviews:write"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'name="author_name"')
+        self.assertNotContains(response, "אישור")
 
     def test_submit_creates_pending_review(self):
         response = self.client.post(reverse("reviews:write"), VALID_POST)
@@ -124,7 +128,9 @@ class WriteReviewTests(TestCase):
         self.assertFalse(Review.objects.exists())
 
     def test_thanks_page(self):
-        self.assertContains(self.client.get(reverse("reviews:thanks")), "תודה! ההמלצה תפורסם לאחר אישור")
+        response = self.client.get(reverse("reviews:thanks"))
+        self.assertContains(response, "תודה על ההמלצה!")
+        self.assertNotContains(response, "אישור")
 
 
 class ManagePanelTests(TestCase):

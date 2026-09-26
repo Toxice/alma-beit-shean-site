@@ -17,6 +17,7 @@ Replaces the Google-login parts of this plan (Task 3, Task 5 Step 2, and the Goo
 - Guests write a review **without logging in**: name (shown on the site), text, stay month/year. Spam guard: hidden honeypot field `website` (filled = silently dropped) + owner approval.
 - `Review` loses `user` and `avatar_url` (migration `0002_drop_google_identity`). Public API keys are now exactly `name`, `text`, `stay_month`, `stay_year`. The site shows an initials badge instead of a photo.
 - Owner panel at `/reviews/manage/` (staff login at `/reviews/manage/login/`): pending reviews first, buttons "אישור ופרסום" / "הסתרה מהאתר" / "מחיקה". Same look as the site: tokens from `site/styles.css`, the hero photo band and logo loaded from `SITE_ORIGIN`.
+- Guest-facing pages never mention approval; thanks page says "תודה על ההמלצה!". Public API sends `Cache-Control: no-cache` so an approved review appears on the next page load.
 - Django `/admin/` stays as a fallback, re-colored with the site palette (`templates/admin/base_site.html`).
 - django-allauth, `reviews/adapters.py`, `login.html`, and the `GOOGLE_CLIENT_*` variables are removed. Task 5 Step 2 (Google OAuth client) is no longer needed.
 

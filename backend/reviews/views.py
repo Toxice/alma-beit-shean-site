@@ -27,7 +27,8 @@ def reviews_api(request):
     ]
     response = JsonResponse({"reviews": reviews})
     response["Access-Control-Allow-Origin"] = settings.SITE_ORIGIN
-    response["Cache-Control"] = "public, max-age=300"
+    # Browser re-checks on every load, so an approved review shows at once. Payload is tiny.
+    response["Cache-Control"] = "no-cache"
     return response
 
 

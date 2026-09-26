@@ -2,7 +2,7 @@
 {% block content %}
 <div class="panel">
   <h1>כתבו המלצה על עלמה</h1>
-  <p>ההמלצה תפורסם באתר לאחר אישור.</p>
+  <p>ספרו לאורחים הבאים איך היה אצלנו.</p>
   <form method="post">
     {% csrf_token %}
     {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}

@@ -12,6 +12,9 @@
   section.querySelectorAll('[data-reviews-write]').forEach(function (a) {
     a.href = API + '/reviews/write/';
   });
+  document.querySelectorAll('.admin-link').forEach(function (a) {
+    a.href = API + '/admin/';
+  });
 
   // textContent only: review text comes from users (stored-XSS guard).
   function el(tag, cls, text) {

@@ -2,14 +2,17 @@ import json
 import os
 import subprocess
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
+from reviews import views
 from reviews.models import Review
 
 VALID_POST = {"author_name": "נועה לוי", "text": "חופשה נהדרת, המקום מאובזר ונקי.", "stay_month": 7, "stay_year": 2025}
@@ -187,6 +190,41 @@ class ManagePanelTests(TestCase):
         self.assertEqual(self.client.get(reverse("reviews:manage")).status_code, 302)
 
 
+class AbuseLimitTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        get_user_model().objects.create_user("owner", password="pw-owner-123", is_staff=True)
+
+    def test_write_capped_per_hour_nothing_saved(self):
+        Review.objects.bulk_create([make_review() for _ in range(views.REVIEWS_PER_HOUR)])
+        response = self.client.post(reverse("reviews:write"), VALID_POST)
+        self.assertEqual(response.status_code, 429)
+        self.assertEqual(Review.objects.count(), views.REVIEWS_PER_HOUR)
+
+    def test_write_cap_ignores_older_reviews(self):
+        Review.objects.bulk_create([make_review() for _ in range(views.REVIEWS_PER_HOUR)])
+        Review.objects.update(created_at=timezone.now() - timedelta(hours=2))
+        self.assertRedirects(self.client.post(reverse("reviews:write"), VALID_POST), reverse("reviews:thanks"))
+
+    def test_login_locked_after_failures_even_with_right_password(self):
+        url = reverse("reviews:manage_login")
+        for _ in range(views.LOGIN_FAILURES_LIMIT):
+            self.assertEqual(self.client.post(url, {"username": "owner", "password": "wrong"}).status_code, 200)
+        response = self.client.post(url, {"username": "owner", "password": "pw-owner-123"})
+        self.assertEqual(response.status_code, 429)
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_successful_login_not_counted(self):
+        url = reverse("reviews:manage_login")
+        for _ in range(views.LOGIN_FAILURES_LIMIT + 1):
+            self.assertEqual(self.client.post(url, {"username": "owner", "password": "pw-owner-123"}).status_code, 302)
+            self.client.logout()
+
+    def test_admin_login_goes_through_throttled_page(self):
+        response = self.client.get("/admin/login/?next=/admin/")
+        self.assertRedirects(response, "/reviews/manage/login/?next=/admin/", fetch_redirect_response=False)
+
+
 class ProdSettingsTests(TestCase):
     """Load settings the way Railway does; the test runner overrides some settings in-process."""
 
@@ -198,9 +236,12 @@ class ProdSettingsTests(TestCase):
             ALLOWED_HOSTS="api.alma-hosting.co.il",
             DJANGO_SETTINGS_MODULE="config.settings",
         )
-        code = "import json, django; django.setup(); from django.conf import settings as s; print(json.dumps(s.ALLOWED_HOSTS))"
+        code = "import json, django; django.setup(); from django.conf import settings as s; print(json.dumps([s.ALLOWED_HOSTS, s.SECURE_HSTS_SECONDS, s.DATA_UPLOAD_MAX_MEMORY_SIZE]))"
         out = subprocess.run(
             [sys.executable, "-c", code], env=env, cwd=Path(__file__).resolve().parent.parent,
             capture_output=True, text=True, check=True,
         )
-        self.assertIn("healthcheck.railway.app", json.loads(out.stdout))
+        hosts, hsts, body_cap = json.loads(out.stdout)
+        self.assertIn("healthcheck.railway.app", hosts)
+        self.assertGreater(hsts, 0)
+        self.assertLessEqual(body_cap, 64 * 1024)

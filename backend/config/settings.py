@@ -68,6 +68,9 @@ TIME_ZONE = "Asia/Jerusalem"
 USE_I18N = True
 USE_TZ = True
 
+# Largest legit POST is a 1000-char review; cap bodies well below Django's 2.5 MB default.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 64 * 1024
+
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -83,6 +86,7 @@ if IS_PROD:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365  # api subdomain only, no includeSubDomains
     STORAGES = {
         "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
         "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},

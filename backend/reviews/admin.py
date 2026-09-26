@@ -9,7 +9,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_editable = ("is_approved",)
     list_filter = ("is_approved",)
     search_fields = ("author_name", "text")
-    readonly_fields = ("user", "created_at")
+    readonly_fields = ("created_at",)
 
     @admin.display(description="המלצה")
     def short_text(self, obj):

@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import (
     MaxLengthValidator,
@@ -11,15 +10,14 @@ from django.core.validators import (
 from django.db import models
 
 FIRST_YEAR = 2020
+HEBREW_MONTHS = [
+    "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
+    "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר",
+]
 
 
 class Review(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews"
-    )
-    # Snapshot of the Google profile at submit time.
     author_name = models.CharField("שם", max_length=100)
-    avatar_url = models.URLField("תמונה", max_length=500, blank=True)
     # TextField max_length is not enforced by model validation, hence the validator.
     text = models.TextField(
         "המלצה",
@@ -45,6 +43,10 @@ class Review(models.Model):
         if self.stay_year and self.stay_month:
             if (self.stay_year, self.stay_month) > (today.year, today.month):
                 raise ValidationError("תאריך השהות לא יכול להיות בעתיד.")
+
+    @property
+    def stay_label(self):
+        return f"{HEBREW_MONTHS[self.stay_month - 1]} {self.stay_year}"
 
     def __str__(self):
         return f"{self.author_name} ({self.stay_month}/{self.stay_year})"

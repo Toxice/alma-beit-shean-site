@@ -23,10 +23,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
     "reviews",
 ]
 
@@ -39,7 +35,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -55,6 +50,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "reviews.views.site_url",
             ],
         },
     },
@@ -67,11 +63,6 @@ DATABASES = {
     )
 }
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-]
-
 LANGUAGE_CODE = "he"
 TIME_ZONE = "Asia/Jerusalem"
 USE_I18N = True
@@ -81,32 +72,15 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# --- Auth: Google only ---
-LOGIN_URL = "/reviews/login/"
-LOGIN_REDIRECT_URL = "/reviews/write/"
-ACCOUNT_ADAPTER = "reviews.adapters.NoSignupAccountAdapter"
-SOCIALACCOUNT_ADAPTER = "reviews.adapters.GoogleSignupAdapter"
-ACCOUNT_EMAIL_VERIFICATION = "none"
-# No mail server: allauth's password-reset/email pages must not try SMTP (would 500).
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": ["profile", "email"],
-        "APP": {
-            "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
-            "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
-            "key": "",
-        },
-    }
-}
+# Only the owner logs in (staff user), to the themed panel at /reviews/manage/.
+LOGIN_URL = "/reviews/manage/login/"
+LOGIN_REDIRECT_URL = "/reviews/manage/"
 
 if IS_PROD:
     # Railway's deploy healthcheck sends this Host header.
     ALLOWED_HOSTS.append("healthcheck.railway.app")
-    # Railway terminates TLS at its proxy; trust its header so OAuth callback URLs are https.
+    # Railway terminates TLS at its proxy; trust its header so request.is_secure() is right.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     STORAGES = {

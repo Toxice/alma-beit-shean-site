@@ -25,18 +25,6 @@
     return name.trim().split(/\s+/).slice(0, 2).map(function (w) { return w.charAt(0); }).join('');
   }
 
-  function avatar(review) {
-    var fallback = el('span', 'review-avatar review-initials', initials(review.name));
-    if (!review.avatar) return fallback;
-    var img = el('img', 'review-avatar');
-    img.alt = '';
-    img.loading = 'lazy';
-    img.referrerPolicy = 'no-referrer'; // Google photo URLs can 403 with a referrer
-    img.addEventListener('error', function () { img.replaceWith(fallback); });
-    img.src = review.avatar;
-    return img;
-  }
-
   function stayLabel(month, year) {
     return 'התארחו ב' + new Date(year, month - 1, 1).toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
   }
@@ -44,7 +32,7 @@
   function card(review) {
     var article = el('article', 'review-card');
     article.append(
-      avatar(review),
+      el('span', 'review-avatar review-initials', initials(review.name)),
       el('h3', 'review-name', review.name),
       el('p', 'review-meta', stayLabel(review.stay_month, review.stay_year)),
       el('p', 'review-text', review.text)

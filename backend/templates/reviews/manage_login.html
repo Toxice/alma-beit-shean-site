@@ -1,0 +1,19 @@
+{% extends "reviews/base.html" %}
+{% block title %}כניסה לניהול – עלמה{% endblock %}
+{% block width %}420px{% endblock %}
+{% block content %}
+<div class="panel">
+  <h1>ניהול המלצות</h1>
+  <p>כניסה לבעלי המקום בלבד.</p>
+  <form method="post">
+    {% csrf_token %}
+    {% if form.errors %}<div class="errors">שם משתמש או סיסמה שגויים.</div>{% endif %}
+    <label for="id_username">שם משתמש</label>
+    <input type="text" name="username" id="id_username" autocomplete="username" required autofocus>
+    <label for="id_password">סיסמה</label>
+    <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="actions"><button type="submit" class="btn btn-primary">כניסה</button></div>
+  </form>
+</div>
+{% endblock %}

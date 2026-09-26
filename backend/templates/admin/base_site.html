@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block extrastyle %}{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+  /* Alma site colors (site/styles.css). Owner's day-to-day panel is /reviews/manage/. */
+  html[data-theme="light"], :root {
+    --primary: hsl(25 30% 15%); --secondary: hsl(25 65% 45%); --accent: hsl(35 30% 62%);
+    --primary-fg: #fff; --body-bg: hsl(30 25% 94%); --body-fg: hsl(25 30% 15%);
+    --header-bg: hsl(25 30% 15%); --header-link-color: #fff; --breadcrumbs-bg: hsl(25 65% 45%);
+    --link-fg: hsl(25 65% 38%); --link-hover-color: hsl(25 30% 15%); --link-selected-fg: hsl(25 65% 38%);
+    --darkened-bg: hsl(30 20% 90%); --selected-bg: hsl(30 15% 85%); --selected-row: hsl(35 45% 88%);
+    --button-bg: hsl(25 30% 15%); --button-hover-bg: hsl(25 65% 45%);
+    --default-button-bg: hsl(25 65% 45%); --default-button-hover-bg: hsl(25 30% 15%);
+    --font-family-primary: "Rubik", "Segoe UI", sans-serif;
+  }
+  #site-name { font-family: "Secular One", "Segoe UI", sans-serif; }
+</style>
+{% endblock %}
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></div>
+{% endblock %}
+{% block nav-global %}{% endblock %}

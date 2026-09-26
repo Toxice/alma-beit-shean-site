@@ -1,11 +1,14 @@
 {% extends "reviews/base.html" %}
 {% block content %}
-  {% if avatar %}<img class="avatar" src="{{ avatar }}" alt="" referrerpolicy="no-referrer">{% endif %}
-  <h1>שלום {{ name }}</h1>
-  <p>השם והתמונה מחשבון Google שלכם יוצגו ליד ההמלצה.</p>
+<div class="panel">
+  <h1>כתבו המלצה על עלמה</h1>
+  <p>ההמלצה תפורסם באתר לאחר אישור.</p>
   <form method="post">
     {% csrf_token %}
     {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
+    <label for="{{ form.author_name.id_for_label }}">השם שיוצג</label>
+    {{ form.author_name }}
+    {% if form.author_name.errors %}<div class="errors">{{ form.author_name.errors }}</div>{% endif %}
     <label for="{{ form.text.id_for_label }}">ההמלצה שלכם</label>
     {{ form.text }}
     {% if form.text.errors %}<div class="errors">{{ form.text.errors }}</div>{% endif %}
@@ -13,6 +16,7 @@
       <div>
         <label for="{{ form.stay_month.id_for_label }}">חודש השהות</label>
         {{ form.stay_month }}
+        {% if form.stay_month.errors %}<div class="errors">{{ form.stay_month.errors }}</div>{% endif %}
       </div>
       <div>
         <label for="{{ form.stay_year.id_for_label }}">שנה</label>
@@ -20,7 +24,9 @@
         {% if form.stay_year.errors %}<div class="errors">{{ form.stay_year.errors }}</div>{% endif %}
       </div>
     </div>
+    <div class="hp" aria-hidden="true"><label for="id_website">אתר</label><input type="text" name="website" id="id_website" tabindex="-1" autocomplete="off"></div>
     <div class="actions"><button type="submit" class="btn btn-primary">שליחת ההמלצה</button></div>
   </form>
   <a class="back" href="{{ site_url }}">חזרה לאתר</a>
+</div>
 {% endblock %}

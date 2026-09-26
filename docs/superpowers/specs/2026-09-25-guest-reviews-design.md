@@ -1,5 +1,7 @@
 # Guest Recommendations (המלצות אורחים) — Design
 
+> **Amended 2026-09-26:** Google sign-in dropped. Guests submit name + text + stay date without login; the owner approves in a site-styled panel at `/reviews/manage/`. No avatar; the site shows initials. See the plan's "Amendment 2026-09-26" section. Google-related lines below are superseded.
+
 **Date:** 2026-09-25
 **Status:** Decisions agreed in brainstorming; visual details below marked *default* were not reviewed and may be changed during implementation review.
 

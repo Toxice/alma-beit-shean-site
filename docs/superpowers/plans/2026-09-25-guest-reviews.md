@@ -10,6 +10,16 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-25-guest-reviews-design.md`
 
+## Amendment 2026-09-26 — no Google sign-in, owner approval panel
+
+Replaces the Google-login parts of this plan (Task 3, Task 5 Step 2, and the Google items in Global Constraints). Implemented on `feature/guest-reviews`.
+
+- Guests write a review **without logging in**: name (shown on the site), text, stay month/year. Spam guard: hidden honeypot field `website` (filled = silently dropped) + owner approval.
+- `Review` loses `user` and `avatar_url` (migration `0002_drop_google_identity`). Public API keys are now exactly `name`, `text`, `stay_month`, `stay_year`. The site shows an initials badge instead of a photo.
+- Owner panel at `/reviews/manage/` (staff login at `/reviews/manage/login/`): pending reviews first, buttons "אישור ופרסום" / "הסתרה מהאתר" / "מחיקה". Same look as the site: tokens from `site/styles.css`, the hero photo band and logo loaded from `SITE_ORIGIN`.
+- Django `/admin/` stays as a fallback, re-colored with the site palette (`templates/admin/base_site.html`).
+- django-allauth, `reviews/adapters.py`, `login.html`, and the `GOOGLE_CLIENT_*` variables are removed. Task 5 Step 2 (Google OAuth client) is no longer needed.
+
 ## Before You Start (decide with the owner)
 
 - The old `django-major-update` branch (Django CMS) was deleted on 2026-09-25; this plan builds on master's static site. Its leftover untracked folders were deleted too.
@@ -18,14 +28,14 @@
 
 ## Global Constraints
 
-- Sign-in: **Google only**. Local username/password signup must be closed.
+- Sign-in: **none for guests** (amended 2026-09-26). Only the owner logs in (staff user) to approve.
 - Review fields: `text` 10–1000 chars, `stay_month` 1–12, `stay_year` 2020–current year; stay date not in the future.
 - New reviews: `is_approved=False`. Public API returns only approved reviews.
-- Public API payload keys exactly: `name`, `avatar`, `text`, `stay_month`, `stay_year`. No email, no user id.
+- Public API payload keys exactly: `name`, `text`, `stay_month`, `stay_year`. No email, no user id.
 - Review text and names rendered on the site with `textContent` only. Never `innerHTML`.
-- Secrets (`SECRET_KEY`, `GOOGLE_CLIENT_SECRET`) only in Railway variables / local env. Never committed.
+- Secrets (`SECRET_KEY`) only in Railway variables / local env. Never committed.
 - Production API domain: `https://api.alma-hosting.co.il`. Site origin: `https://alma-hosting.co.il`.
-- UI copy (Hebrew, RTL): kicker "המלצות", title "מה האורחים שלנו מספרים", meta "התארחו ב<חודש> <שנה>", buttons "כתבו המלצה" / "עוד המלצות", empty "עוד אין המלצות באתר — היו הראשונים להמליץ!", thanks "תודה! ההמלצה תפורסם לאחר אישור", consent "השם והתמונה מחשבון Google שלכם יוצגו ליד ההמלצה".
+- UI copy (Hebrew, RTL): kicker "המלצות", title "מה האורחים שלנו מספרים", meta "התארחו ב<חודש> <שנה>", buttons "כתבו המלצה" / "עוד המלצות", empty "עוד אין המלצות באתר — היו הראשונים להמליץ!", thanks "תודה! ההמלצה תפורסם לאחר אישור".
 - Work on branch `feature/guest-reviews`.
 
 ## Review Focus

@@ -66,3 +66,30 @@ class ReviewModelTests(TestCase):
         make_review(self.user, stay_year=2024, stay_month=11).save()
         got = [(r.stay_year, r.stay_month) for r in Review.objects.all()]
         self.assertEqual(got, [(2025, 1), (2024, 11), (2024, 5)])
+
+
+from django.test import override_settings
+from django.urls import reverse
+
+
+@override_settings(SITE_ORIGIN="https://alma-hosting.co.il")
+class ReviewsApiTests(TestCase):
+    def setUp(self):
+        user = make_user()
+        make_review(user, text="מאושרת ומומלצת מאוד", is_approved=True).save()
+        make_review(user, text="ממתינה לאישור עדיין").save()
+
+    def test_returns_only_approved(self):
+        data = self.client.get(reverse("reviews:api")).json()
+        self.assertEqual([r["text"] for r in data["reviews"]], ["מאושרת ומומלצת מאוד"])
+
+    def test_payload_has_exact_keys_no_personal_data(self):
+        review = self.client.get(reverse("reviews:api")).json()["reviews"][0]
+        self.assertEqual(set(review), {"name", "avatar", "text", "stay_month", "stay_year"})
+
+    def test_cors_header_allows_only_site_origin(self):
+        response = self.client.get(reverse("reviews:api"))
+        self.assertEqual(response["Access-Control-Allow-Origin"], "https://alma-hosting.co.il")
+
+    def test_post_not_allowed(self):
+        self.assertEqual(self.client.post(reverse("reviews:api")).status_code, 405)

@@ -93,3 +93,57 @@ class ReviewsApiTests(TestCase):
 
     def test_post_not_allowed(self):
         self.assertEqual(self.client.post(reverse("reviews:api")).status_code, 405)
+
+
+from allauth.socialaccount.models import SocialAccount
+
+
+class WriteReviewTests(TestCase):
+    def setUp(self):
+        self.user = make_user("googler")
+        SocialAccount.objects.create(
+            user=self.user,
+            provider="google",
+            uid="123",
+            extra_data={"name": "נועה לוי", "picture": "https://lh3.googleusercontent.com/a/noa"},
+        )
+
+    def test_anonymous_redirected_to_login_page(self):
+        response = self.client.get(reverse("reviews:write"))
+        self.assertRedirects(response, "/reviews/login/?next=/reviews/write/", fetch_redirect_response=False)
+
+    def test_login_page_offers_google(self):
+        response = self.client.get(reverse("reviews:login"))
+        self.assertContains(response, "/accounts/google/login/")
+
+    def test_submit_creates_pending_review_with_google_identity(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("reviews:write"),
+            {"text": "חופשה נהדרת, המקום מאובזר ונקי.", "stay_month": 7, "stay_year": 2025},
+        )
+        self.assertRedirects(response, reverse("reviews:thanks"))
+        review = Review.objects.get()
+        self.assertEqual(review.author_name, "נועה לוי")
+        self.assertEqual(review.avatar_url, "https://lh3.googleusercontent.com/a/noa")
+        self.assertEqual(review.user, self.user)
+        self.assertFalse(review.is_approved)
+
+    def test_future_date_shows_error_and_saves_nothing(self):
+        self.client.force_login(self.user)
+        today = date.today()
+        response = self.client.post(
+            reverse("reviews:write"),
+            {"text": "חופשה נהדרת, המקום מאובזר ונקי.", "stay_month": 12, "stay_year": today.year + 1},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Review.objects.exists())
+
+    def test_thanks_page(self):
+        self.assertContains(self.client.get(reverse("reviews:thanks")), "תודה! ההמלצה תפורסם לאחר אישור")
+
+
+class SignupClosedTests(TestCase):
+    def test_local_signup_is_closed(self):
+        response = self.client.get("/accounts/signup/")
+        self.assertTemplateUsed(response, "account/signup_closed.html")

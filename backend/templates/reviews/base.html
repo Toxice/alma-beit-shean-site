@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}המלצה – עלמה{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:hsl(30 25% 94%);--fg:hsl(25 30% 15%);--card:hsl(30 20% 90%);--muted:hsl(25 20% 38%);
+      --border:hsl(25 20% 78%);--primary:hsl(25 65% 45%);--radius:1rem;--shadow:0 18px 36px -12px hsla(25,30%,20%,.16);}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:"Rubik","Segoe UI",sans-serif;line-height:1.6;
+      min-height:100vh;display:grid;place-items:center;padding:20px}
+    .panel{width:100%;max-width:520px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:2rem 1.6rem;text-align:center}
+    h1{font-family:"Secular One","Segoe UI",sans-serif;font-weight:400;font-size:1.7rem;margin:0 0 .6rem}
+    p{margin:.4rem 0 1.2rem;color:var(--muted)}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.8rem 1.5rem;border-radius:999px;font:inherit;
+      font-weight:700;border:1px solid var(--border);background:#fff;color:var(--fg);cursor:pointer;text-decoration:none}
+    .btn-primary{background:var(--fg);color:#fff;border-color:var(--fg)}
+    .avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;margin:0 auto .5rem;display:block}
+    form{text-align:right}
+    label{display:block;font-weight:700;margin:.9rem 0 .3rem}
+    textarea,select{width:100%;font:inherit;padding:.7rem;border:1px solid var(--border);border-radius:.6rem;background:#fff}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+    .errors{color:#a4262c;font-size:.92rem}
+    .actions{text-align:center;margin-top:1.4rem}
+    .back{display:inline-block;margin-top:1rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="panel">{% block content %}{% endblock %}</main>
+</body>
+</html>

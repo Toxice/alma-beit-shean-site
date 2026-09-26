@@ -199,6 +199,7 @@ class AbuseLimitTests(TestCase):
         Review.objects.bulk_create([make_review() for _ in range(views.REVIEWS_PER_HOUR)])
         response = self.client.post(reverse("reviews:write"), VALID_POST)
         self.assertEqual(response.status_code, 429)
+        self.assertContains(response, VALID_POST["text"], status_code=429)  # typed text not lost
         self.assertEqual(Review.objects.count(), views.REVIEWS_PER_HOUR)
 
     def test_write_cap_ignores_older_reviews(self):
@@ -214,6 +215,13 @@ class AbuseLimitTests(TestCase):
         self.assertEqual(response.status_code, 429)
         self.assertNotIn("_auth_user_id", self.client.session)
 
+    def test_failure_after_counter_expired_starts_fresh(self):
+        url = reverse("reviews:manage_login")
+        self.client.post(url, {"username": "owner", "password": "wrong"})
+        cache.delete(views.LOGIN_FAILURES_KEY)  # expired or evicted
+        self.assertEqual(self.client.post(url, {"username": "owner", "password": "wrong"}).status_code, 200)
+        self.assertEqual(cache.get(views.LOGIN_FAILURES_KEY), 1)
+
     def test_successful_login_not_counted(self):
         url = reverse("reviews:manage_login")
         for _ in range(views.LOGIN_FAILURES_LIMIT + 1):
@@ -223,6 +231,30 @@ class AbuseLimitTests(TestCase):
     def test_admin_login_goes_through_throttled_page(self):
         response = self.client.get("/admin/login/?next=/admin/")
         self.assertRedirects(response, "/reviews/manage/login/?next=/admin/", fetch_redirect_response=False)
+
+
+@override_settings(ORIGIN_AUTH_SECRET="s3cret-from-cloudflare")
+class OriginAuthTests(TestCase):
+    """Only Cloudflare knows the secret header, so direct hits on Railway are refused."""
+
+    def test_request_without_header_refused(self):
+        self.assertEqual(self.client.get(reverse("reviews:api")).status_code, 403)
+
+    def test_wrong_header_refused(self):
+        self.assertEqual(self.client.get(reverse("reviews:api"), HTTP_X_ORIGIN_AUTH="nope").status_code, 403)
+
+    def test_right_header_allowed(self):
+        response = self.client.get(reverse("reviews:api"), HTTP_X_ORIGIN_AUTH="s3cret-from-cloudflare")
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(ALLOWED_HOSTS=["healthcheck.railway.app"])
+    def test_railway_healthcheck_exempt(self):
+        response = self.client.get(reverse("reviews:api"), HTTP_HOST="healthcheck.railway.app")
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(ORIGIN_AUTH_SECRET="")
+    def test_disabled_when_secret_unset(self):
+        self.assertEqual(self.client.get(reverse("reviews:api")).status_code, 200)
 
 
 class ProdSettingsTests(TestCase):

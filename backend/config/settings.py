@@ -16,6 +16,9 @@ CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS] if IS_PROD else [
 # Local default = `npx wrangler dev` port.
 SITE_ORIGIN = os.environ.get("SITE_ORIGIN", "http://localhost:8787")
 
+# Shared secret Cloudflare sends as X-Origin-Auth; requests without it are refused. Empty = off.
+ORIGIN_AUTH_SECRET = os.environ.get("ORIGIN_AUTH_SECRET", "")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -27,6 +30,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "reviews.middleware.origin_auth",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

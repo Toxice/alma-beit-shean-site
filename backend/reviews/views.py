@@ -20,10 +20,6 @@ LOGIN_LOCK_SECONDS = 15 * 60
 LOGIN_FAILURES_KEY = "manage-login-failures"
 
 
-def busy(request):
-    return render(request, "reviews/busy.html", status=429)
-
-
 def site_url(request):
     """Template context: link back to the static site and load its images."""
     return {"site_url": settings.SITE_ORIGIN}
@@ -51,7 +47,10 @@ def write_review(request):
     if request.method == "POST":
         recent = Review.objects.filter(created_at__gte=timezone.now() - timedelta(hours=1)).count()
         if recent >= REVIEWS_PER_HOUR:
-            return busy(request)
+            # Keep what the guest typed; they can resend in a few minutes.
+            form = ReviewForm(request.POST)
+            form.add_error(None, "יש כרגע עומס. נסו לשלוח שוב בעוד כמה דקות.")
+            return render(request, "reviews/write.html", {"form": form}, status=429)
     form = ReviewForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         if not form.cleaned_data["website"]:
@@ -80,11 +79,13 @@ def manage_login(request):
     # ponytail: counter lives in the local-memory cache, so each gunicorn worker counts alone
     # (2 workers = 40 tries per 15 min). Move CACHES to Redis if more workers are added.
     if request.method == "POST" and cache.get(LOGIN_FAILURES_KEY, 0) >= LOGIN_FAILURES_LIMIT:
-        return busy(request)
+        return render(request, "reviews/busy.html", status=429)
     response = _login(request)
     if request.method == "POST" and response.status_code == 200:  # form re-rendered = wrong password
-        cache.add(LOGIN_FAILURES_KEY, 0, LOGIN_LOCK_SECONDS)
-        cache.incr(LOGIN_FAILURES_KEY)
+        try:
+            cache.incr(LOGIN_FAILURES_KEY)
+        except ValueError:  # first failure, or the lock window expired
+            cache.set(LOGIN_FAILURES_KEY, 1, LOGIN_LOCK_SECONDS)
     return response
 
 

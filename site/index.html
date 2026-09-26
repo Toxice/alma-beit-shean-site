@@ -173,6 +173,19 @@
     </div>
   </section>
 
+  <section class="wrap" id="reviews" hidden>
+    <div class="section-head">
+      <span class="kicker" style="font-size:clamp(1.6rem,3.4vw,2.3rem);color:hsl(var(--foreground));">המלצות</span>
+      <h2>מה האורחים שלנו מספרים</h2>
+    </div>
+    <p class="reviews-empty" data-reviews-empty hidden>עוד אין המלצות באתר — היו הראשונים להמליץ!</p>
+    <div class="reviews-grid" data-reviews-grid></div>
+    <div class="reviews-actions">
+      <button type="button" class="btn btn-outline" data-reviews-more hidden>עוד המלצות</button>
+      <a class="btn btn-primary" data-reviews-write href="https://api.alma-hosting.co.il/reviews/write/">כתבו המלצה</a>
+    </div>
+  </section>
+
   <section class="wrap">
     <div class="section-head">
       <span class="kicker" style="font-size:clamp(1.6rem,3.4vw,2.3rem);color:hsl(var(--foreground));">שאלות נפוצות</span>
@@ -251,5 +264,6 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="reviews.js"></script>
 
 </body></html>

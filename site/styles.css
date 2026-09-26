@@ -308,8 +308,8 @@ html.a11y-font-3 body{font-size:20px;}
   padding:1.6rem 1.4rem;
   text-align:center;
 }
-.review-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto .7rem;}
 .review-initials{
+  width:56px;height:56px;border-radius:50%;margin:0 auto .7rem;
   display:flex;align-items:center;justify-content:center;
   background:hsl(var(--primary));color:hsl(var(--primary-foreground));
   font-weight:700;font-size:1.2rem;

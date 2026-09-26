@@ -9,9 +9,9 @@
     {% csrf_token %}
     {% if form.errors %}<div class="errors">שם משתמש או סיסמה שגויים.</div>{% endif %}
     <label for="id_username">שם משתמש</label>
-    <input type="text" name="username" id="id_username" autocomplete="username" required autofocus>
+    {{ form.username }}
     <label for="id_password">סיסמה</label>
-    <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+    {{ form.password }}
     <input type="hidden" name="next" value="{{ next }}">
     <div class="actions"><button type="submit" class="btn btn-primary">כניסה</button></div>
   </form>

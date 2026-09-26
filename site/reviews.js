@@ -32,7 +32,7 @@
   function card(review) {
     var article = el('article', 'review-card');
     article.append(
-      el('span', 'review-avatar review-initials', initials(review.name)),
+      el('span', 'review-initials', initials(review.name)),
       el('h3', 'review-name', review.name),
       el('p', 'review-meta', stayLabel(review.stay_month, review.stay_year)),
       el('p', 'review-text', review.text)

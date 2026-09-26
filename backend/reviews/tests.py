@@ -147,3 +147,41 @@ class SignupClosedTests(TestCase):
     def test_local_signup_is_closed(self):
         response = self.client.get("/accounts/signup/")
         self.assertTemplateUsed(response, "account/signup_closed.html")
+
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+
+class ProdSettingsTests(TestCase):
+    """Load settings the way Railway does; the test runner overrides some settings in-process."""
+
+    def prod_settings(self):
+        env = dict(
+            os.environ,
+            RAILWAY_ENVIRONMENT_NAME="production",
+            SECRET_KEY="test-secret",
+            ALLOWED_HOSTS="api.alma-hosting.co.il",
+            DJANGO_SETTINGS_MODULE="config.settings",
+        )
+        code = (
+            "import json, django; django.setup(); from django.conf import settings as s; "
+            "print(json.dumps({'hosts': s.ALLOWED_HOSTS, 'email': s.EMAIL_BACKEND, "
+            "'unknown': getattr(s, 'ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS', True)}))"
+        )
+        out = subprocess.run(
+            [sys.executable, "-c", code], env=env, cwd=Path(__file__).resolve().parent.parent,
+            capture_output=True, text=True, check=True,
+        )
+        return json.loads(out.stdout)
+
+    def test_railway_healthcheck_host_allowed(self):
+        self.assertIn("healthcheck.railway.app", self.prod_settings()["hosts"])
+
+    def test_no_smtp_so_allauth_email_pages_cannot_500(self):
+        s = self.prod_settings()
+        self.assertEqual(s["email"], "django.core.mail.backends.console.EmailBackend")
+        self.assertFalse(s["unknown"])

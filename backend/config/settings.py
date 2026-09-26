@@ -87,6 +87,9 @@ LOGIN_REDIRECT_URL = "/reviews/write/"
 ACCOUNT_ADAPTER = "reviews.adapters.NoSignupAccountAdapter"
 SOCIALACCOUNT_ADAPTER = "reviews.adapters.GoogleSignupAdapter"
 ACCOUNT_EMAIL_VERIFICATION = "none"
+# No mail server: allauth's password-reset/email pages must not try SMTP (would 500).
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email"],
@@ -99,6 +102,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 if IS_PROD:
+    # Railway's deploy healthcheck sends this Host header.
+    ALLOWED_HOSTS.append("healthcheck.railway.app")
     # Railway terminates TLS at its proxy; trust its header so OAuth callback URLs are https.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"

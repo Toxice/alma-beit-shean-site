@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
@@ -44,7 +45,14 @@ def thanks(request):
     return render(request, "reviews/thanks.html")
 
 
-staff_required = user_passes_test(lambda u: u.is_active and u.is_staff)
+def _is_staff(user):
+    # Logged-in non-staff get 403; redirecting them to login would loop (redirect_authenticated_user).
+    if user.is_authenticated and not user.is_staff:
+        raise PermissionDenied
+    return user.is_active and user.is_staff
+
+
+staff_required = user_passes_test(_is_staff)
 
 
 @staff_required

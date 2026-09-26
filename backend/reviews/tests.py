@@ -142,7 +142,8 @@ class ManagePanelTests(TestCase):
 
     def test_non_staff_forbidden(self):
         self.client.force_login(self.guest)
-        self.assertNotEqual(self.client.get(reverse("reviews:manage")).status_code, 200)
+        # 403, not a redirect: login page would bounce a logged-in user straight back (loop).
+        self.assertEqual(self.client.get(reverse("reviews:manage")).status_code, 403)
 
     def test_owner_sees_pending_review(self):
         self.client.force_login(self.owner)

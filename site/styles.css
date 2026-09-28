@@ -44,6 +44,7 @@ section{padding-block:clamp(2.5rem,6vw,4.5rem);}
 .brand img{width:40px;height:40px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px hsl(var(--background)), 0 0 0 3px #000;}
 .brand span{font-family:var(--font-heading);font-size:1.15rem;letter-spacing:.02em;color:hsl(var(--foreground));}
 footer .brand img{width:54px;height:54px;}
+footer .brand img.jm-logo{width:80px;height:auto;border-radius:0;box-shadow:none;object-fit:contain;}
 /* ---------- hero ---------- */
 .hero{
   position:relative;
@@ -56,6 +57,7 @@ footer .brand img{width:54px;height:54px;}
   background:var(--gradient-hero-overlay);
 }
 .hero .wrap{position:relative;z-index:1;padding-block:clamp(2rem,7vw,4rem);}
+.jm-badge{position:absolute;top:12px;right:12px;z-index:2;width:64px;height:auto;}
 .hero-logo{
   display:block;
   width:min(320px, 62vw);

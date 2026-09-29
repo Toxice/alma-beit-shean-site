@@ -3,3 +3,7 @@ logo_new.jpg
 terms and conditions.md
 terms and conditions.txt
 node_modules/
+__pycache__/
+backend/db.sqlite3
+backend/staticfiles/
+backend/.venv/

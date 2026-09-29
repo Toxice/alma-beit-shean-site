@@ -1,26 +1,88 @@
 (function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   document.querySelectorAll('[data-carousel]').forEach(function (car) {
     var track = car.querySelector('.carousel-track');
-    var slides = track.querySelectorAll('img');
-    var prevBtn = car.querySelector('[data-car-prev]');
-    var nextBtn = car.querySelector('[data-car-next]');
-    var counter = car.querySelector('[data-car-counter]');
-    var total = slides.length;
-    var index = 0;
+    var originals = Array.prototype.slice.call(track.children);
+    var n = originals.length;
 
-    function render() {
-      track.style.transform = 'translateX(-' + (index * 100) + '%)';
-      if (counter) counter.textContent = (index + 1) + ' / ' + total;
+    // Infinite loop: [copy][originals][copy]. When scrolling stops on a copy,
+    // jump invisibly to the matching original so there is always a neighbour.
+    function copy(el) {
+      var c = el.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true');
+      return c;
     }
-    prevBtn.addEventListener('click', function () {
-      index = (index - 1 + total) % total;
-      render();
+    originals.forEach(function (el) { track.insertBefore(copy(el), originals[0]); });
+    originals.forEach(function (el) { track.appendChild(copy(el)); });
+    var slides = Array.prototype.slice.call(track.children);
+    var active = null;
+
+    function offsetFor(el) {
+      return el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2;
+    }
+    function center(el, smooth) {
+      track.scrollTo({ left: offsetFor(el), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+    }
+
+    // Active = slide whose midpoint is closest to the strip's midpoint.
+    function markActive() {
+      var mid = track.scrollLeft + track.clientWidth / 2;
+      var best = null, bestDist = Infinity;
+      slides.forEach(function (el) {
+        var d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = el; }
+      });
+      slides.forEach(function (el) { el.classList.toggle('is-active', el === best); });
+      active = best;
+    }
+
+    function recenterIfCopy() {
+      var i = slides.indexOf(active);
+      if (i >= n && i < 2 * n) return;
+      var twin = slides[(i % n) + n];
+      track.classList.add('no-anim');
+      track.scrollLeft += twin.offsetLeft - active.offsetLeft;
+      markActive();
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { track.classList.remove('no-anim'); });
+      });
+    }
+
+    var queued = false, idle;
+    track.addEventListener('scroll', function () {
+      clearTimeout(idle);
+      idle = setTimeout(recenterIfCopy, 150);
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; markActive(); });
+    }, { passive: true });
+
+    slides.forEach(function (el, i) {
+      el.tabIndex = i >= n && i < 2 * n ? 0 : -1;
+      el.addEventListener('click', function () { if (el !== active) center(el, true); });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); center(el, true); }
+      });
     });
-    nextBtn.addEventListener('click', function () {
-      index = (index + 1) % total;
-      render();
+
+    center(slides[n], false);
+    markActive();
+  });
+})();
+
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
     });
-    render();
+  }, { rootMargin: '0px 0px -8% 0px' });
+  // Siblings in a group cascade via --i; JS-only class so content shows without JS.
+  document.querySelectorAll('.section-head, .feature, .gal-group, .attractions-carousel, .faq-item, .cta-band, .fact').forEach(function (el) {
+    el.classList.add('reveal');
+    el.style.setProperty('--i', Array.prototype.indexOf.call(el.parentNode.children, el) % 5);
+    io.observe(el);
   });
 })();
 

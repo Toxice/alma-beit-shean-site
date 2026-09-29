@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-admin.site.site_header = "עלמה – ניהול המלצות"
+admin.site.site_header = "עלמה – פאנל ניהול"
 admin.site.site_url = settings.SITE_ORIGIN
 
 urlpatterns = [

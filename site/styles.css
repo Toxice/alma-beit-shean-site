@@ -57,7 +57,6 @@ footer .brand img.jm-logo{width:80px;height:auto;border-radius:0;box-shadow:none
   background:var(--gradient-hero-overlay);
 }
 .hero .wrap{position:relative;z-index:1;padding-block:clamp(2rem,7vw,4rem);}
-.admin-link{position:absolute;top:12px;left:12px;z-index:2;padding:.4rem .9rem;font-size:.85rem;font-weight:500;}
 .hero-logo{
   display:block;
   width:min(320px, 62vw);

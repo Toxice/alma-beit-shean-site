@@ -229,8 +229,15 @@ class AbuseLimitTests(TestCase):
             self.client.logout()
 
     def test_admin_login_goes_through_throttled_page(self):
-        response = self.client.get("/admin/login/?next=/admin/")
-        self.assertRedirects(response, "/reviews/manage/login/?next=/admin/", fetch_redirect_response=False)
+        response = self.client.get("/alma-manage-x7/login/?next=/alma-manage-x7/")
+        self.assertRedirects(response, "/reviews/manage/login/?next=/alma-manage-x7/", fetch_redirect_response=False)
+
+    def test_admin_served_at_private_path(self):
+        self.client.login(username="owner", password="pw-owner-123")
+        self.assertEqual(self.client.get("/alma-manage-x7/").status_code, 200)
+
+    def test_default_admin_path_not_found(self):
+        self.assertEqual(self.client.get("/admin/").status_code, 404)
 
 
 @override_settings(ORIGIN_AUTH_SECRET="s3cret-from-cloudflare")

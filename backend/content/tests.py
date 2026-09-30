@@ -130,3 +130,38 @@ class FaqItemTests(TestCase):
         FaqItem.objects.create(question="שנייה?", answer="ב", order=2)
         FaqItem.objects.create(question="ראשונה?", answer="א", order=1)
         self.assertEqual([f.question for f in FaqItem.objects.all()], ["ראשונה?", "שנייה?"])
+
+
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA)
+class ContentAdminTests(TestCase):
+    def setUp(self):
+        self.owner = get_user_model().objects.create_superuser("owner", "owner@example.com", "pw-123456")
+
+    def test_owner_sees_gallery_and_faq_pages(self):
+        self.client.force_login(self.owner)
+        photo = make_photo()
+        for url in [
+            reverse("admin:content_gallerytab_changelist"),
+            reverse("admin:content_gallerytab_add"),
+            reverse("admin:content_gallerytab_change", args=[photo.tab.pk]),
+            reverse("admin:content_faqitem_changelist"),
+            reverse("admin:content_faqitem_add"),
+        ]:
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_tab_page_shows_photo_thumbnail(self):
+        self.client.force_login(self.owner)
+        photo = make_photo()
+        response = self.client.get(reverse("admin:content_gallerytab_change", args=[photo.tab.pk]))
+        # The <img> itself, not just Django's "currently: <link>" text for the file field.
+        self.assertContains(response, f'<img src="{photo.image.url}"')
+
+    def test_anonymous_redirected_to_login(self):
+        for url in [reverse("admin:content_gallerytab_changelist"), reverse("admin:content_faqitem_changelist")]:
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 302)

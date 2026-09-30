@@ -224,3 +224,43 @@ class ContentApiTests(TestCase):
 
     def test_missing_media_is_404(self):
         self.assertEqual(self.client.get("/media/gallery/missing.jpg").status_code, 404)
+
+
+from io import StringIO
+
+from django.core.management import call_command
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA)
+class SeedContentTests(TestCase):
+    def seed(self):
+        out = StringIO()
+        call_command("seed_content", stdout=out)
+        return out.getvalue()
+
+    def test_seeds_current_site_content_in_order(self):
+        self.seed()
+        self.assertEqual(
+            [t.title for t in GalleryTab.objects.all()],
+            ["פנים הבית", "חדרי שינה", "חדרי רחצה", "בחוץ"],
+        )
+        self.assertEqual(GalleryPhoto.objects.count(), 15)
+        self.assertEqual(FaqItem.objects.count(), 5)
+        first = GalleryTab.objects.first().photos.first()
+        self.assertEqual(first.alt_text, "סלון יחידה א׳")
+        self.assertLessEqual(max(first.width, first.height), 1600)
+        self.assertTrue(media_path(first.image.name).exists())
+        self.assertEqual(FaqItem.objects.last().question, "האם יש בתי כנסת בקרבת המתחם?")
+
+    def test_second_run_changes_nothing(self):
+        self.seed()
+        names = sorted(GalleryPhoto.objects.values_list("image", flat=True))
+        self.assertIn("already seeded", self.seed())
+        self.assertEqual(sorted(GalleryPhoto.objects.values_list("image", flat=True)), names)
+        self.assertEqual(FaqItem.objects.count(), 5)
+
+    def test_skips_when_owner_already_added_content(self):
+        FaqItem.objects.create(question="שאלה של הבעלים?", answer="תשובה")
+        self.assertIn("already seeded", self.seed())
+        self.assertEqual(GalleryTab.objects.count(), 0)
+        self.assertEqual(FaqItem.objects.count(), 1)

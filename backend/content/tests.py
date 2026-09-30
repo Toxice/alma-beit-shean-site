@@ -165,3 +165,62 @@ class ContentAdminTests(TestCase):
         for url in [reverse("admin:content_gallerytab_changelist"), reverse("admin:content_faqitem_changelist")]:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 302)
+
+
+import json
+
+from django.conf import settings
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA)
+class ContentApiTests(TestCase):
+    def get_json(self):
+        response = self.client.get(reverse("content:api"))
+        self.assertEqual(response.status_code, 200)
+        return response, json.loads(response.content)
+
+    def test_shape_order_and_absolute_urls(self):
+        second = GalleryTab.objects.create(title="חדרי רחצה", order=2)
+        first = GalleryTab.objects.create(title="חדרי שינה", order=1)
+        make_photo(tab=first, alt_text="שנייה", order=2)
+        make_photo(tab=first, alt_text="ראשונה", order=1)
+        make_photo(tab=second, alt_text="אמבטיה")
+        FaqItem.objects.create(question="ב?", answer="2", order=2)
+        FaqItem.objects.create(question="א?", answer="1", order=1)
+
+        _, data = self.get_json()
+
+        self.assertEqual([t["title"] for t in data["gallery"]], ["חדרי שינה", "חדרי רחצה"])
+        photos = data["gallery"][0]["photos"]
+        self.assertEqual([p["alt"] for p in photos], ["ראשונה", "שנייה"])
+        self.assertTrue(photos[0]["url"].startswith("http://testserver/media/gallery/"))
+        self.assertEqual((photos[0]["width"], photos[0]["height"]), (1600, 800))
+        self.assertEqual(data["faq"], [{"q": "א?", "a": "1"}, {"q": "ב?", "a": "2"}])
+
+    def test_empty_tab_omitted(self):
+        GalleryTab.objects.create(title="ריקה")
+        make_photo()
+        _, data = self.get_json()
+        self.assertEqual([t["title"] for t in data["gallery"]], ["חדרי שינה"])
+
+    def test_answer_text_returned_raw(self):
+        FaqItem.objects.create(question="<b>שאלה</b>?", answer="שורה 1\nשורה 2 <script>x</script>")
+        _, data = self.get_json()
+        self.assertEqual(data["faq"][0]["a"], "שורה 1\nשורה 2 <script>x</script>")
+
+    def test_cors_header_is_site_origin(self):
+        response, _ = self.get_json()
+        self.assertEqual(response["Access-Control-Allow-Origin"], settings.SITE_ORIGIN)
+
+    def test_post_not_allowed(self):
+        self.assertEqual(self.client.post(reverse("content:api")).status_code, 405)
+
+    def test_media_served_with_long_cache(self):
+        photo = make_photo()
+        response = self.client.get(photo.image.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Cache-Control"], "public, max-age=31536000, immutable")
+        self.assertTrue(b"".join(response.streaming_content))
+
+    def test_missing_media_is_404(self):
+        self.assertEqual(self.client.get("/media/gallery/missing.jpg").status_code, 404)

@@ -10,5 +10,6 @@ urlpatterns = [
     # Admin lives at an unlisted path (not linked from the site); login goes through the throttled owner page.
     path("alma-manage-x7/login/", RedirectView.as_view(url="/reviews/manage/login/", query_string=True)),
     path("alma-manage-x7/", admin.site.urls),
+    path("", include("content.urls")),
     path("", include("reviews.urls")),
 ]

@@ -232,16 +232,43 @@
 </a>
 
 <div class="a11y-widget">
-  <button type="button" class="a11y-toggle" id="a11yToggle" aria-expanded="false" aria-controls="a11yPanel" aria-label="תפריט נגישות">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="4" r="2"/><path d="M12 7c-1.1 0-2 .9-2 2v4.5L6.5 15l1 1.9L11 15v6h2v-6l3.5 1.9 1-1.9L14 13.5V9c0-1.1-.9-2-2-2z"/></svg>
+  <button type="button" class="a11y-toggle" id="a11yToggle" aria-expanded="false" aria-controls="a11yPanel" aria-label="פתיחת תפריט נגישות">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="3.6" r="2.1"/><path d="M4.5 7.2c-.6-.2-1.2.2-1.3.8-.1.6.2 1.1.8 1.3l5 1.4v3.5l-2.1 6.2c-.2.6.1 1.2.7 1.4.6.2 1.2-.1 1.4-.7L11 16h2l2 5.1c.2.6.8.9 1.4.7.6-.2.9-.8.7-1.4L15 14.2v-3.5l5-1.4c.6-.2.9-.7.8-1.3-.1-.6-.7-1-1.3-.8L14 8.6h-4z"/></svg>
   </button>
-  <div class="a11y-panel" id="a11yPanel" role="menu" aria-label="אפשרויות נגישות" hidden>
-    <button type="button" role="menuitem" data-a11y="font-up">הגדלת טקסט A+</button>
-    <button type="button" role="menuitem" data-a11y="font-down">הקטנת טקסט A-</button>
-    <button type="button" role="menuitem" data-a11y="contrast">ניגודיות גבוהה</button>
-    <button type="button" role="menuitem" data-a11y="grayscale">גווני אפור</button>
-    <button type="button" role="menuitem" data-a11y="underline">הדגשת קישורים</button>
-    <button type="button" role="menuitem" data-a11y="reset">איפוס תצוגה</button>
+  <div class="a11y-panel" id="a11yPanel" role="dialog" aria-labelledby="a11yTitle" hidden>
+    <div class="a11y-head">
+      <h2 id="a11yTitle">נגישות</h2>
+      <button type="button" class="a11y-close" id="a11yClose" aria-label="סגירת תפריט נגישות">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="a11y-chips">
+      <button type="button" class="a11y-chip" data-a11y="contrast" aria-pressed="false">ניגודיות גבוהה</button>
+      <button type="button" class="a11y-chip" data-a11y="invert" aria-pressed="false">ניגודיות הפוכה</button>
+      <button type="button" class="a11y-chip" data-a11y="grayscale" aria-pressed="false">גווני אפור</button>
+      <button type="button" class="a11y-chip" data-a11y="links" aria-pressed="false">הדגשת קישורים</button>
+      <button type="button" class="a11y-chip" data-a11y="font" aria-pressed="false">גופן קריא</button>
+      <button type="button" class="a11y-chip" data-a11y="still" aria-pressed="false">עצירת אנימציות</button>
+    </div>
+    <div class="a11y-step" data-step="scale" role="group" aria-labelledby="a11yLbl-scale">
+      <span id="a11yLbl-scale">גודל טקסט</span>
+      <button type="button" data-dir="-1" aria-label="הקטנת גודל טקסט">&minus;</button>
+      <output aria-live="polite">100%</output>
+      <button type="button" data-dir="1" aria-label="הגדלת גודל טקסט">+</button>
+    </div>
+    <div class="a11y-step" data-step="word" role="group" aria-labelledby="a11yLbl-word">
+      <span id="a11yLbl-word">ריווח מילים</span>
+      <button type="button" data-dir="-1" aria-label="הקטנת ריווח מילים">&minus;</button>
+      <output aria-live="polite">0</output>
+      <button type="button" data-dir="1" aria-label="הגדלת ריווח מילים">+</button>
+    </div>
+    <div class="a11y-step" data-step="letter" role="group" aria-labelledby="a11yLbl-letter">
+      <span id="a11yLbl-letter">ריווח אותיות</span>
+      <button type="button" data-dir="-1" aria-label="הקטנת ריווח אותיות">&minus;</button>
+      <output aria-live="polite">0</output>
+      <button type="button" data-dir="1" aria-label="הגדלת ריווח אותיות">+</button>
+    </div>
+    <button type="button" class="a11y-reset" data-a11y="reset">איפוס הגדרות</button>
   </div>
 </div>
 

@@ -90,62 +90,80 @@
   var root = document.documentElement;
   var toggle = document.getElementById('a11yToggle');
   var panel = document.getElementById('a11yPanel');
+  var closeBtn = document.getElementById('a11yClose');
   if (!toggle || !panel) return;
 
-  var FONT_CLASSES = ['a11y-font-1', 'a11y-font-2', 'a11y-font-3'];
-  var TOGGLE_CLASSES = ['a11y-contrast', 'a11y-grayscale', 'a11y-underline'].concat(FONT_CLASSES);
-  var fontStep = 0;
+  var TOGGLES = ['contrast', 'invert', 'grayscale', 'links', 'font', 'still'];
+  var STEPS = { scale: 5, word: 5, letter: 5 }; // max step for each stepper
+  var state;
+
+  function fresh() {
+    return { contrast: false, invert: false, grayscale: false, links: false, font: false, still: false, scale: 0, word: 0, letter: 0 };
+  }
+
+  function apply() {
+    TOGGLES.forEach(function (k) {
+      root.classList.toggle('a11y-' + k, state[k]);
+      var tile = panel.querySelector('[data-a11y="' + k + '"]');
+      if (tile) tile.setAttribute('aria-pressed', String(state[k]));
+    });
+    var filters = [];
+    if (state.contrast) filters.push('contrast(1.35)');
+    if (state.invert) filters.push('invert(1) hue-rotate(180deg)');
+    if (state.grayscale) filters.push('grayscale(1)');
+    root.style.filter = filters.join(' ');
+    root.style.fontSize = state.scale ? (100 + state.scale * 10) + '%' : '';
+    root.classList.toggle('a11y-spacing', state.word > 0 || state.letter > 0);
+    root.style.setProperty('--a11y-word', (state.word * 0.12) + 'em');
+    root.style.setProperty('--a11y-letter', (state.letter * 0.03) + 'em');
+    panel.querySelectorAll('[data-step]').forEach(function (el) {
+      var k = el.getAttribute('data-step');
+      el.querySelector('output').textContent = k === 'scale' ? (100 + state.scale * 10) + '%' : String(state[k]);
+    });
+  }
 
   function save() {
-    localStorage.setItem('a11y', JSON.stringify({
-      classes: TOGGLE_CLASSES.filter(function (c) { return root.classList.contains(c); }),
-      fontStep: fontStep
-    }));
+    try { localStorage.setItem('a11y-v2', JSON.stringify(state)); } catch (e) {}
   }
 
   function load() {
+    state = fresh();
     try {
-      var saved = JSON.parse(localStorage.getItem('a11y'));
-      if (!saved) return;
-      saved.classes.forEach(function (c) { root.classList.add(c); });
-      fontStep = saved.fontStep || 0;
+      var saved = JSON.parse(localStorage.getItem('a11y-v2'));
+      if (saved) Object.keys(state).forEach(function (k) { if (k in saved) state[k] = saved[k]; });
     } catch (e) {}
-  }
-
-  function setFontStep(step) {
-    fontStep = Math.max(0, Math.min(FONT_CLASSES.length, step));
-    FONT_CLASSES.forEach(function (c, i) { root.classList.toggle(c, i < fontStep); });
+    apply();
   }
 
   function openPanel(open) {
     panel.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
+    (open ? closeBtn : toggle).focus();
   }
 
-  toggle.addEventListener('click', function () {
-    openPanel(panel.hidden);
-  });
+  toggle.addEventListener('click', function () { openPanel(panel.hidden); });
+  closeBtn.addEventListener('click', function () { openPanel(false); });
 
   document.addEventListener('click', function (e) {
     if (!panel.hidden && !panel.contains(e.target) && !toggle.contains(e.target)) openPanel(false);
   });
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') openPanel(false);
+    if (e.key === 'Escape' && !panel.hidden) openPanel(false);
   });
 
   panel.addEventListener('click', function (e) {
-    var action = e.target.getAttribute('data-a11y');
-    if (!action) return;
-    if (action === 'font-up') setFontStep(fontStep + 1);
-    else if (action === 'font-down') setFontStep(fontStep - 1);
-    else if (action === 'contrast') root.classList.toggle('a11y-contrast');
-    else if (action === 'grayscale') root.classList.toggle('a11y-grayscale');
-    else if (action === 'underline') root.classList.toggle('a11y-underline');
-    else if (action === 'reset') {
-      TOGGLE_CLASSES.forEach(function (c) { root.classList.remove(c); });
-      setFontStep(0);
-    }
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var action = btn.getAttribute('data-a11y');
+    var step = btn.closest('[data-step]');
+    if (action === 'reset') state = fresh();
+    else if (TOGGLES.indexOf(action) !== -1) state[action] = !state[action];
+    else if (step) {
+      var k = step.getAttribute('data-step');
+      state[k] = Math.max(0, Math.min(STEPS[k], state[k] + Number(btn.getAttribute('data-dir'))));
+    } else return;
+    apply();
     save();
   });
 

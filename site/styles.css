@@ -34,7 +34,7 @@ body{
   margin:0;
   background:var(--canvas);
   color:var(--ink);
-  font:16px/1.6 var(--font-body);
+  font:1rem/1.6 var(--font-body);
   -webkit-font-smoothing:antialiased;
   direction:rtl;
   padding-bottom:env(safe-area-inset-bottom,0px);
@@ -268,34 +268,76 @@ footer .brand img.jm-logo{width:96px;height:auto;object-fit:contain;}
   .wa-float-btn svg{width:26px;height:26px;}
 }
 
-/* ---------- accessibility widget ---------- */
-.a11y-widget{position:fixed;bottom:20px;right:20px;z-index:999;}
+/* ---------- accessibility widget: round float + card (mirrors the WhatsApp float) ---------- */
 .a11y-toggle{
-  width:48px;height:48px;border-radius:var(--radius-sm);border:none;cursor:pointer;
-  background:var(--ink-strong);color:#fff;
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  width:60px;height:60px;border-radius:50%;cursor:pointer;
+  background:var(--sand-bg);color:var(--sand-fg);border:2px solid var(--sand-fg);
   display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 30px hsla(25,30%,10%,.25);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
 }
-.a11y-toggle:hover{background:#333;}
-.a11y-toggle svg{width:26px;height:26px;}
+.a11y-toggle:hover,.a11y-toggle[aria-expanded="true"]{transform:scale(1.08);box-shadow:0 14px 36px hsla(25,30%,10%,.3);}
+.a11y-toggle:active{transform:scale(.98);}
+.a11y-toggle svg{width:32px;height:32px;}
+
 .a11y-panel{
-  position:absolute;bottom:58px;right:0;
+  position:fixed;bottom:92px;right:20px;z-index:1000;
+  width:min(340px,calc(100vw - 32px));max-height:calc(100dvh - 120px);overflow-y:auto;
   background:var(--surface);color:var(--ink);
   border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(0,0,0,.05);padding:.4rem;
-  display:flex;flex-direction:column;gap:.15rem;min-width:200px;
+  box-shadow:0 12px 40px hsla(25,30%,10%,.12);
+  padding:1.1rem 1.2rem 1.2rem;
+  display:flex;flex-direction:column;gap:.9rem;
+  transform-origin:bottom right;
+  animation:a11y-in .3s var(--ease);
 }
-.a11y-panel button{
-  text-align:right;background:none;border:none;cursor:pointer;
-  padding:.55rem .7rem;border-radius:var(--radius-sm);font:inherit;font-size:.92rem;color:inherit;
-}
-.a11y-panel button:hover,.a11y-panel button:focus-visible{background:var(--canvas);}
+@keyframes a11y-in{from{opacity:0;transform:translateY(8px) scale(.98);}to{opacity:1;transform:none;}}
+.a11y-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:.7rem;border-bottom:1px solid var(--line);}
+.a11y-head h2{margin:0;font-family:var(--font-heading);font-size:1.35rem;font-weight:400;color:var(--ink-strong);}
+.a11y-close{background:none;border:none;color:var(--muted);cursor:pointer;padding:.3rem;display:flex;border-radius:var(--radius-sm);}
+.a11y-close svg{width:22px;height:22px;}
+.a11y-close:hover{background:var(--canvas);color:var(--ink-strong);}
 
-html.a11y-contrast{filter:contrast(1.25);}
-html.a11y-grayscale{filter:grayscale(1);}
-html.a11y-underline a{text-decoration:underline!important;}
-html.a11y-font-1 body{font-size:18px;}
-html.a11y-font-2 body{font-size:20px;}
-html.a11y-font-3 body{font-size:22px;}
+.a11y-chips{display:flex;flex-wrap:wrap;gap:.5rem;}
+.a11y-chip{
+  padding:.45rem .9rem;border-radius:9999px;cursor:pointer;font:inherit;font-size:.88rem;font-weight:500;
+  background:var(--sand-bg);color:var(--sand-fg);border:1px solid transparent;
+  transition:background .2s var(--ease),color .2s var(--ease),transform .2s var(--ease);
+}
+.a11y-chip:hover{border-color:var(--sand-fg);}
+.a11y-chip:active{transform:scale(.97);}
+.a11y-chip[aria-pressed="true"]{background:var(--ink-strong);color:#fff;}
+
+.a11y-step{display:grid;grid-template-columns:1fr 36px 3.6rem 36px;align-items:center;gap:.4rem;padding-top:.7rem;border-top:1px solid var(--line);}
+.a11y-step span{font-size:.95rem;color:var(--ink-strong);}
+.a11y-step button{
+  height:36px;border-radius:var(--radius-sm);cursor:pointer;
+  background:var(--surface);border:1px solid var(--line-strong);color:var(--ink-strong);font:500 1.15rem/1 var(--font-body);
+}
+.a11y-step button:hover{background:var(--canvas);}
+.a11y-step output{text-align:center;font-family:var(--font-mono);font-size:.9rem;color:var(--ink);}
+.a11y-reset{
+  margin-top:.3rem;padding:.75rem;border-radius:var(--radius-sm);cursor:pointer;
+  background:var(--ink-strong);color:#fff;border:none;font:inherit;font-weight:500;
+}
+.a11y-reset:hover{background:#333;}
+.a11y-reset:active{transform:scale(.98);}
+.a11y-toggle:focus-visible,.a11y-panel button:focus-visible{outline:2px solid var(--ink-strong);outline-offset:2px;}
+
+@media (max-width:480px){
+  .a11y-toggle{bottom:16px;right:16px;width:52px;height:52px;}
+  .a11y-toggle svg{width:28px;height:28px;}
+  .a11y-panel{bottom:80px;right:16px;}
+}
+@media (prefers-reduced-motion:reduce){ .a11y-panel{animation:none;} }
+
+/* applied settings (filters are set inline by script.js so they can combine) */
+html.a11y-links a{text-decoration:underline!important;text-underline-offset:3px;outline:2px solid var(--sand-fg);outline-offset:2px;}
+html.a11y-font body, html.a11y-font body *{font-family:Arial,"Segoe UI",sans-serif!important;}
+html.a11y-still *, html.a11y-still *::before, html.a11y-still *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}
+html.a11y-spacing body *{word-spacing:var(--a11y-word)!important;letter-spacing:var(--a11y-letter)!important;}
+html.a11y-invert img, html.a11y-invert video{filter:invert(1) hue-rotate(180deg);}
 
 /* ---------- reviews ---------- */
 .reviews-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-items:start;}

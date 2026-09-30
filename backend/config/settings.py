@@ -26,7 +26,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "adminsortable2",
     "reviews",
+    "content",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +79,10 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 64 * 1024
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Owner-uploaded gallery photos. Production: a Railway volume mounted at /data (MEDIA_ROOT=/data/media).
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Only the owner logs in (staff user), to the themed panel at /reviews/manage/.

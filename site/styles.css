@@ -250,7 +250,7 @@ footer{
   font-size:.85rem;
 }
 .brand{display:inline-flex;align-items:center;text-decoration:none;margin-bottom:.6rem;}
-footer .brand img.jm-logo{width:72px;height:auto;object-fit:contain;}
+footer .brand img.jm-logo{width:96px;height:auto;object-fit:contain;}
 
 /* ---------- floating WhatsApp button (unchanged) ---------- */
 .wa-float{position:fixed;bottom:20px;left:20px;z-index:999;display:block;text-decoration:none;}

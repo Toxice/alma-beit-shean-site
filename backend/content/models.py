@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from django.core.validators import MaxLengthValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
@@ -47,14 +47,17 @@ class GalleryPhoto(models.Model):
             self.image.save(f"{uuid4().hex}.jpg", content, save=False)
         super().save(*args, **kwargs)
         if old_name and old_name != self.image.name:
-            self.image.storage.delete(old_name)
+            storage = self.image.storage
+            # After commit only: a rolled-back save must not lose the photo the row still points to.
+            transaction.on_commit(lambda: storage.delete(old_name))
 
 
 @receiver(post_delete, sender=GalleryPhoto)
 def delete_photo_file(sender, instance, **kwargs):
     # Also fires for each photo when its tab is deleted (cascade).
     if instance.image:
-        instance.image.storage.delete(instance.image.name)
+        storage, name = instance.image.storage, instance.image.name
+        transaction.on_commit(lambda: storage.delete(name))
 
 
 class FaqItem(models.Model):

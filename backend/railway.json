@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "deploy": {
     "preDeployCommand": ["python manage.py migrate --noinput"],
-    "startCommand": "python manage.py collectstatic --noinput && python manage.py seed_content && gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 2",
+    "startCommand": "python manage.py collectstatic --noinput && (python manage.py seed_content || echo seed_content failed, starting anyway) && gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 2",
     "healthcheckPath": "/api/reviews/"
   }
 }

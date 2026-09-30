@@ -100,7 +100,8 @@ class GalleryPhotoTests(TestCase):
         photo = make_photo()
         old = photo.image.name
         photo.image = image_upload(color=(10, 200, 10))
-        photo.save()
+        with self.captureOnCommitCallbacks(execute=True):
+            photo.save()
         self.assertNotEqual(photo.image.name, old)
         self.assertFalse(media_path(old).exists())
         self.assertTrue(media_path(photo.image.name).exists())
@@ -108,13 +109,15 @@ class GalleryPhotoTests(TestCase):
     def test_deleting_photo_deletes_file(self):
         photo = make_photo()
         name = photo.image.name
-        photo.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            photo.delete()
         self.assertFalse(media_path(name).exists())
 
     def test_deleting_tab_deletes_its_photo_files(self):
         tab = GalleryTab.objects.create(title="בחוץ")
         names = [make_photo(tab=tab).image.name for _ in range(2)]
-        tab.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            tab.delete()
         self.assertEqual(GalleryPhoto.objects.count(), 0)
         for name in names:
             self.assertFalse(media_path(name).exists())
@@ -264,3 +267,57 @@ class SeedContentTests(TestCase):
         self.assertIn("already seeded", self.seed())
         self.assertEqual(GalleryTab.objects.count(), 0)
         self.assertEqual(FaqItem.objects.count(), 1)
+
+
+from django.db import transaction
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA)
+class ReviewFixTests(TestCase):
+    def setUp(self):
+        self.owner = get_user_model().objects.create_superuser("owner2", "o2@example.com", "pw-123456")
+        self.client.force_login(self.owner)
+
+    def inline_post(self, tab, photos, title=None):
+        data = {
+            "title": title or tab.title,
+            "photos-TOTAL_FORMS": str(len(photos)),
+            "photos-INITIAL_FORMS": str(sum(1 for p in photos if p.get("id"))),
+            "photos-MIN_NUM_FORMS": "0",
+            "photos-MAX_NUM_FORMS": "1000",
+        }
+        for i, p in enumerate(photos):
+            for key, value in p.items():
+                data[f"photos-{i}-{key}"] = value
+        return data
+
+    def test_tab_saves_even_if_an_existing_photo_file_is_missing(self):
+        photo = make_photo()
+        media_path(photo.image.name).unlink()  # file lost on disk (volume mistake, manual cleanup)
+        url = reverse("admin:content_gallerytab_change", args=[photo.tab.pk])
+        data = self.inline_post(photo.tab, [{"id": str(photo.pk), "tab": str(photo.tab.pk), "alt_text": "תיאור חדש", "order": "1"}])
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        photo.refresh_from_db()
+        self.assertEqual(photo.alt_text, "תיאור חדש")
+
+    def test_rolled_back_replace_keeps_old_file(self):
+        photo = make_photo()
+        old = photo.image.name
+        with self.captureOnCommitCallbacks(execute=True):
+            try:
+                with transaction.atomic():
+                    photo.image = image_upload(color=(1, 2, 3))
+                    photo.save()
+                    raise RuntimeError("db error during save")
+            except RuntimeError:
+                pass
+        self.assertTrue(media_path(old).exists())
+
+    def test_heic_upload_in_admin_shows_jpg_png_message(self):
+        heic = SimpleUploadedFile("IMG_0001.HEIC", b"\x00\x00\x00\x18ftypheic" + b"\x00" * 64)
+        data = self.inline_post(None, [{"alt_text": "תמונה", "order": "1", "image": heic}], title="אייפון")
+        response = self.client.post(reverse("admin:content_gallerytab_add"), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "JPG או PNG")
+        self.assertEqual(GalleryTab.objects.count(), 0)

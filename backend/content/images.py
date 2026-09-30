@@ -6,17 +6,20 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 MAX_SIDE = 1600
 MAX_BYTES = 15 * 1024 * 1024
+UNSUPPORTED_MESSAGE = "הקובץ אינו תמונה נתמכת. יש להעלות תמונה בפורמט JPG או PNG."
 
 
 def validate_upload(file):
     """Reject files over 15 MB or that Pillow cannot read (e.g. iPhone HEIC)."""
+    if getattr(file, "_committed", False):
+        return  # already-stored photo: only new uploads are checked (a lost file must not block saving the tab)
     if file.size > MAX_BYTES:
         raise ValidationError("התמונה גדולה מדי. הגודל המרבי הוא 15MB.")
     try:
         with Image.open(file) as img:
             img.verify()
     except (UnidentifiedImageError, OSError, SyntaxError):
-        raise ValidationError("הקובץ אינו תמונה נתמכת. יש להעלות תמונה בפורמט JPG או PNG.")
+        raise ValidationError(UNSUPPORTED_MESSAGE)
     finally:
         file.seek(0)
 

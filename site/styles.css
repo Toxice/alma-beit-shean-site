@@ -219,7 +219,7 @@ main > section.wrap + section.wrap{border-top:1px solid var(--line);}
 .faq{max-width:760px;border-top:1px solid var(--line);}
 .faq-item{border-bottom:1px solid var(--line);padding-block:1.6rem;}
 .faq-item h3{font-family:var(--font-body);font-weight:500;font-size:1.12rem;margin-bottom:.45rem;}
-.faq-item p{margin:0;color:var(--muted);font-size:1rem;max-width:60ch;}
+.faq-item p{margin:0;color:var(--muted);font-size:1rem;max-width:60ch;white-space:pre-line;}
 
 /* ---------- final cta ---------- */
 .cta-band{

@@ -1,7 +1,8 @@
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.querySelectorAll('[data-carousel]').forEach(function (car) {
+  // Exposed so content.js can set up carousels it inserts after load.
+  window.initCarousel = function (car) {
     var track = car.querySelector('.carousel-track');
     var originals = Array.prototype.slice.call(track.children);
     var n = originals.length;
@@ -68,22 +69,28 @@
 
     center(slides[n], false);
     markActive();
-  });
+  };
+
+  document.querySelectorAll('[data-carousel]').forEach(window.initCarousel);
 })();
 
 (function () {
-  if (!('IntersectionObserver' in window)) return;
-  var io = new IntersectionObserver(function (entries) {
+  var io = 'IntersectionObserver' in window && new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
     });
   }, { rootMargin: '0px 0px -8% 0px' });
   // Siblings in a group cascade via --i; JS-only class so content shows without JS.
-  document.querySelectorAll('.section-head, .feature, .gal-group, .attractions-carousel, .faq-item, .cta-band, .fact').forEach(function (el) {
-    el.classList.add('reveal');
-    el.style.setProperty('--i', Array.prototype.indexOf.call(el.parentNode.children, el) % 5);
-    io.observe(el);
-  });
+  // Exposed so content.js can animate elements it inserts after load.
+  window.initReveal = function (elements) {
+    if (!io) return;
+    Array.prototype.forEach.call(elements, function (el) {
+      el.classList.add('reveal');
+      el.style.setProperty('--i', Array.prototype.indexOf.call(el.parentNode.children, el) % 5);
+      io.observe(el);
+    });
+  };
+  window.initReveal(document.querySelectorAll('.section-head, .feature, .gal-group, .attractions-carousel, .faq-item, .cta-band, .fact'));
 })();
 
 (function () {

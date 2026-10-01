@@ -23,6 +23,8 @@
 <div class="top">
   <div><span class="kicker">עלמה · ניהול</span><h1>המלצות אורחים</h1></div>
   <div class="tools">
+    <a class="btn" href="{% url 'admin:content_gallerytab_changelist' %}">עריכת גלריה</a>
+    <a class="btn" href="{% url 'admin:content_faqitem_changelist' %}">עריכת שאלות נפוצות</a>
     <a class="btn" href="{{ site_url }}/#reviews" target="_blank" rel="noopener">צפייה באתר</a>
     <form method="post" action="{% url 'reviews:manage_logout' %}">{% csrf_token %}<button class="btn" type="submit">יציאה</button></form>
   </div>

@@ -159,6 +159,19 @@ class ManagePanelTests(TestCase):
         response = self.client.get(reverse("reviews:manage"))
         self.assertContains(response, self.review.text)
 
+    def test_panel_links_to_gallery_and_faq_editing(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("reviews:manage"))
+        self.assertContains(response, f'href="{reverse("admin:content_gallerytab_changelist")}"')
+        self.assertContains(response, f'href="{reverse("admin:content_faqitem_changelist")}"')
+
+    def test_admin_links_back_to_panel(self):
+        self.owner.is_superuser = True
+        self.owner.save()
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("admin:content_faqitem_changelist"))
+        self.assertContains(response, f'href="{reverse("reviews:manage")}"')
+
     def test_owner_login_with_password(self):
         response = self.client.post("/reviews/manage/login/", {"username": "owner", "password": "pw-owner-123"})
         self.assertRedirects(response, reverse("reviews:manage"), fetch_redirect_response=False)

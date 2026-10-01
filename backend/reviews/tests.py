@@ -249,6 +249,10 @@ class AbuseLimitTests(TestCase):
         self.client.login(username="owner", password="pw-owner-123")
         self.assertEqual(self.client.get("/alma-manage-x7/").status_code, 200)
 
+    def test_short_manage_url_redirects_to_panel(self):
+        for path in ("/manage", "/manage/"):
+            self.assertRedirects(self.client.get(path), "/reviews/manage/", fetch_redirect_response=False)
+
     def test_default_admin_path_not_found(self):
         self.assertEqual(self.client.get("/admin/").status_code, 404)
 

@@ -22,8 +22,23 @@
     function offsetFor(el) {
       return el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2;
     }
+    // data-duration (ms) = slower, timed glide; without it the browser's own smooth scroll.
+    var duration = Number(car.dataset.duration) || 0;
     function center(el, smooth) {
-      track.scrollTo({ left: offsetFor(el), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+      var left = offsetFor(el);
+      if (!smooth || reduce || !duration) {
+        track.scrollTo({ left: left, behavior: smooth && !reduce ? 'smooth' : 'auto' });
+        return;
+      }
+      var from = track.scrollLeft, start = performance.now();
+      track.style.scrollSnapType = 'none'; // snapping would fight the frame-by-frame scroll
+      requestAnimationFrame(function step(now) {
+        var t = Math.min((now - start) / duration, 1);
+        var ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        track.scrollLeft = from + (left - from) * ease;
+        if (t < 1) requestAnimationFrame(step);
+        else track.style.scrollSnapType = '';
+      });
     }
 
     // Active = slide whose midpoint is closest to the strip's midpoint.

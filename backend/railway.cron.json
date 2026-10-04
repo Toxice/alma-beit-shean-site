@@ -1,0 +1,8 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "python manage.py import_airbnb_reviews",
+    "cronSchedule": "0 4 * * *",
+    "restartPolicyType": "NEVER"
+  }
+}

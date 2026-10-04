@@ -355,6 +355,7 @@ html.a11y-invert img, html.a11y-invert video{filter:invert(1) hue-rotate(180deg)
 }
 .review-name{font-family:var(--font-body);font-weight:500;font-size:1.02rem;}
 .review-meta{margin:.15rem 0 .9rem;color:var(--muted);font-size:.82rem;}
+.review-source{display:inline-block;margin:-.6rem 0 .8rem;padding:.1rem .55rem;border:1px solid var(--muted);border-radius:999px;color:var(--muted);font-size:.72rem;letter-spacing:.02em;}
 .review-text{margin:0;font-size:.97rem;line-height:1.75;color:var(--ink);}
 .reviews-grid.is-collapsed::after{
   content:"";position:absolute;inset-inline:0;bottom:0;height:120px;pointer-events:none;

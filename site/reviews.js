@@ -34,9 +34,10 @@
     article.append(
       el('span', 'review-initials', initials(review.name)),
       el('h3', 'review-name', review.name),
-      el('p', 'review-meta', stayLabel(review.stay_month, review.stay_year)),
-      el('p', 'review-text', review.text)
+      el('p', 'review-meta', stayLabel(review.stay_month, review.stay_year))
     );
+    if (review.source === 'airbnb') article.append(el('span', 'review-source', 'מ-Airbnb'));
+    article.append(el('p', 'review-text', review.text));
     return article;
   }
 

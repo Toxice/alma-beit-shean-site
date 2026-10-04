@@ -4,9 +4,7 @@
 
   var local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   var API = local ? 'http://localhost:8000' : 'https://api.alma-hosting.co.il';
-  var PAGE = 6;
   var grid = section.querySelector('[data-reviews-grid]');
-  var more = section.querySelector('[data-reviews-more]');
   var empty = section.querySelector('[data-reviews-empty]');
 
   section.querySelectorAll('[data-reviews-write]').forEach(function (a) {
@@ -48,22 +46,11 @@
     })
     .then(function (data) {
       var list = data.reviews;
-      if (!list.length) empty.hidden = false;
-      list.forEach(function (review, i) {
-        var c = card(review);
-        if (i >= PAGE) c.hidden = true;
-        grid.append(c);
-      });
-      if (list.length > PAGE) {
-        more.hidden = false;
-        grid.classList.add('is-collapsed');
-        more.addEventListener('click', function () {
-          grid.querySelectorAll('.review-card[hidden]').forEach(function (c) { c.hidden = false; });
-          grid.classList.remove('is-collapsed');
-          more.hidden = true;
-        });
-      }
+      list.forEach(function (review) { grid.append(card(review)); });
       section.hidden = false;
+      // Same looping strip as the galleries; set up after unhiding so it can measure widths.
+      if (list.length) window.initCarousel(section.querySelector('[data-reviews-carousel]'));
+      else empty.hidden = false;
     })
     .catch(function () {
       section.hidden = true; // API down: hide the section, rest of the site unaffected

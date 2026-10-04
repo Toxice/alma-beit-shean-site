@@ -434,6 +434,13 @@ class ImportAirbnbReviewsTests(TestCase):
         self.assertEqual(list(Review.objects.values_list("external_id", flat=True)), ["1100000000000000001"])
         self.assertIn("created 1, skipped 3", out)
 
+    def test_non_string_fields_skipped_not_crash(self):
+        good = sample_items()[0]
+        items = [dict(good, id="num-text", text=123), dict(good, id="num-name", reviewer={"firstName": 5}), good]
+        out, _ = self.run_import(items)
+        self.assertIn("created 2, skipped 1", out)
+        self.assertEqual(Review.objects.get(external_id="num-name").author_name, "אורח/ת")
+
     def test_item_with_bad_date_skipped_others_imported(self):
         good, other = sample_items()[:2]
         self.run_import([dict(good, createdAt="yesterday"), other])

@@ -40,7 +40,8 @@ def to_fields(item):
     if not isinstance(item, dict):
         return None
     review_id = item.get("id")
-    text = (item.get("text") or "").strip()
+    text = item.get("text")
+    text = text.strip() if isinstance(text, str) else ""
     if review_id in (None, "") or not text:
         return None
     try:
@@ -50,7 +51,8 @@ def to_fields(item):
     if len(text) > MAX_TEXT:
         text = text[: MAX_TEXT - 1] + "…"
     reviewer = item.get("reviewer") if isinstance(item.get("reviewer"), dict) else {}
-    name = (reviewer.get("firstName") or "").strip() or FALLBACK_NAME
+    name = reviewer.get("firstName")
+    name = (name.strip() if isinstance(name, str) else "") or FALLBACK_NAME
     return {
         "author_name": name[:MAX_NAME],
         "text": text,

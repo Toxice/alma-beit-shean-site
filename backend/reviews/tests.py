@@ -482,6 +482,12 @@ class ImportAirbnbReviewsTests(TestCase):
         self.assertNotIn("test-token", request.full_url)
         self.assertIn("1771157482793114563", request.data.decode())
 
+    def test_asks_only_for_10_newest_reviews(self):
+        # Apify bills per review returned; the cap keeps the daily cost flat as the listing grows.
+        _, urlopen = self.run_import([])
+        body = json.loads(urlopen.call_args.args[0].data)
+        self.assertEqual((body["maxReviewsPerListing"], body["sortBy"]), (10, "most-recent"))
+
     @mock.patch.dict(os.environ, {"APIFY_TOKEN": ""})
     def test_missing_token_raises_clear_error(self):
         with self.assertRaisesMessage(CommandError, "APIFY_TOKEN"):

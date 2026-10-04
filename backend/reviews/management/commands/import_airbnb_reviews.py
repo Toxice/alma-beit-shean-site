@@ -14,6 +14,8 @@ DEFAULT_LISTING_URL = "https://www.airbnb.com/rooms/1771157482793114563"
 TIMEOUT_SECONDS = 300  # Apify's cap for run-sync endpoints
 MAX_TEXT = 1000
 MAX_NAME = 100
+# Apify bills per review returned; newest 10 a day keeps the cost flat (~$1.50/month max).
+MAX_REVIEWS = 10
 FALLBACK_NAME = "אורח/ת"
 
 
@@ -21,7 +23,9 @@ def fetch_reviews(token, listing_url):
     """Run the Apify actor and return its dataset items. Raises CommandError on any failure."""
     request = Request(
         f"https://api.apify.com/v2/acts/{ACTOR}/run-sync-get-dataset-items",
-        data=json.dumps({"startUrls": [{"url": listing_url}]}).encode(),
+        data=json.dumps(
+            {"startUrls": [{"url": listing_url}], "maxReviewsPerListing": MAX_REVIEWS, "sortBy": "most-recent"}
+        ).encode(),
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
         method="POST",
     )

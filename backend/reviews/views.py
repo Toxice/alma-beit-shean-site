@@ -33,6 +33,7 @@ def reviews_api(request):
             "text": r.text,
             "stay_month": r.stay_month,
             "stay_year": r.stay_year,
+            "source": r.source,
         }
         for r in Review.objects.filter(is_approved=True)
     ]

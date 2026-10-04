@@ -17,6 +17,10 @@ HEBREW_MONTHS = [
 
 
 class Review(models.Model):
+    class Source(models.TextChoices):
+        SITE = "site", "אתר"
+        AIRBNB = "airbnb", "Airbnb"
+
     author_name = models.CharField("שם", max_length=100)
     # TextField max_length is not enforced by model validation, hence the validator.
     text = models.TextField(
@@ -32,6 +36,9 @@ class Review(models.Model):
     )
     is_approved = models.BooleanField("מאושר לפרסום", default=False)
     created_at = models.DateTimeField("נשלח", auto_now_add=True)
+    source = models.CharField("מקור", max_length=10, choices=Source.choices, default=Source.SITE)
+    # Airbnb review ID. NULL for site reviews; the unique index ignores NULLs.
+    external_id = models.CharField("מזהה חיצוני", max_length=64, null=True, blank=True, unique=True)
 
     class Meta:
         ordering = ["-stay_year", "-stay_month", "-created_at"]

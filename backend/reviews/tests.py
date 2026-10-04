@@ -73,6 +73,17 @@ class ReviewModelTests(TestCase):
         got = [(r.stay_year, r.stay_month) for r in Review.objects.all()]
         self.assertEqual(got, [(2025, 1), (2024, 11), (2024, 5)])
 
+    def test_new_review_defaults_to_site_source(self):
+        review = make_review()
+        review.save()
+        self.assertEqual(review.source, Review.Source.SITE)
+        self.assertIsNone(review.external_id)
+
+    def test_many_site_reviews_without_external_id_allowed(self):
+        make_review().save()
+        make_review().save()  # two NULL external_ids must not clash
+        self.assertEqual(Review.objects.count(), 2)
+
 
 @override_settings(SITE_ORIGIN="https://alma-hosting.co.il")
 class ReviewsApiTests(TestCase):
@@ -86,7 +97,12 @@ class ReviewsApiTests(TestCase):
 
     def test_payload_has_exact_keys_no_personal_data(self):
         review = self.client.get(reverse("reviews:api")).json()["reviews"][0]
-        self.assertEqual(set(review), {"name", "text", "stay_month", "stay_year"})
+        self.assertEqual(set(review), {"name", "text", "stay_month", "stay_year", "source"})
+
+    def test_payload_includes_source(self):
+        make_review(text="מאירבנבי עם מקור", is_approved=True, source=Review.Source.AIRBNB, external_id="42").save()
+        sources = {r["text"]: r["source"] for r in self.client.get(reverse("reviews:api")).json()["reviews"]}
+        self.assertEqual(sources, {"מאושרת ומומלצת מאוד": "site", "מאירבנבי עם מקור": "airbnb"})
 
     def test_cors_header_allows_only_site_origin(self):
         response = self.client.get(reverse("reviews:api"))

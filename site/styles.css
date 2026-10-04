@@ -359,6 +359,26 @@ html.a11y-invert img, html.a11y-invert video{filter:invert(1) hue-rotate(180deg)
 .review-source{display:inline-block;margin:-.6rem 0 .8rem;padding:.1rem .55rem;border:1px solid var(--muted);border-radius:999px;color:var(--muted);font-size:.72rem;letter-spacing:.02em;}
 .reviews-carousel .carousel-track:not(.no-anim) > *{transition-duration:.9s;}
 .review-text{margin:0;font-size:.97rem;line-height:1.75;color:var(--ink);}
+.review-more{display:none;}
+/* phones: wide, short card — initials beside the name, text clamped with "read more" */
+@media (max-width:640px){
+  .reviews-carousel{--slide:88%;}
+  .review-card{display:grid;grid-template-columns:auto 1fr;column-gap:.85rem;align-content:start;padding:1.1rem 1.15rem 1.2rem;}
+  .review-initials{grid-row:span 2;align-self:center;width:40px;height:40px;margin:0;}
+  .review-name,.review-meta{grid-column:2;}
+  .review-meta{margin:.1rem 0 0;}
+  .review-source{grid-column:1/-1;justify-self:start;margin:.75rem 0 0;}
+  .review-text{
+    grid-column:1/-1;margin-top:.75rem;font-size:.93rem;line-height:1.65;
+    display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden;
+  }
+  .review-card.is-open .review-text{display:block;-webkit-line-clamp:unset;line-clamp:none;overflow:visible;}
+  .review-card.is-long .review-more,.review-card.is-open .review-more{
+    display:inline-block;grid-column:1/-1;justify-self:start;
+    margin-top:.4rem;padding:.25rem 0;background:none;border:0;
+    font:inherit;font-size:.88rem;color:var(--ink-strong);text-decoration:underline;text-underline-offset:3px;cursor:pointer;
+  }
+}
 .reviews-empty{color:var(--muted);font-size:1.02rem;}
 .reviews-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem;}
 

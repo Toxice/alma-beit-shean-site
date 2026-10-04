@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from datetime import datetime
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -17,6 +18,7 @@ MAX_NAME = 100
 # Apify bills per review returned; newest 10 a day keeps the cost flat (~$1.50/month max).
 MAX_REVIEWS = 10
 FALLBACK_NAME = "אורח/ת"
+LINE_BREAK = re.compile(r"<br\s*/?>", re.IGNORECASE)  # Airbnb text uses <br/> for new lines
 
 
 def fetch_reviews(token, listing_url):
@@ -45,7 +47,7 @@ def to_fields(item):
         return None
     review_id = item.get("id")
     text = item.get("text")
-    text = text.strip() if isinstance(text, str) else ""
+    text = LINE_BREAK.sub("\n", text).strip() if isinstance(text, str) else ""
     if review_id in (None, "") or not text:
         return None
     try:

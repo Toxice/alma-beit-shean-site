@@ -417,6 +417,11 @@ class ImportAirbnbReviewsTests(TestCase):
         self.assertEqual(len(text), 1000)
         self.assertTrue(text.endswith("…"))
 
+    def test_airbnb_line_breaks_become_newlines(self):
+        # Airbnb review text carries <br/> tags; the site shows text as-is, so they'd appear literally.
+        self.run_import([dict(sample_items()[0], text="נקי מאוד!<br/>מומלץ<br>בחום<BR />")])
+        self.assertEqual(Review.objects.get().text, "נקי מאוד!\nמומלץ\nבחום")
+
     def test_long_name_cut_to_100(self):
         item = dict(sample_items()[0], reviewer={"firstName": "ש" * 150})
         self.run_import([item])

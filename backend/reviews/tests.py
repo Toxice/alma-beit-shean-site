@@ -3,10 +3,14 @@ import os
 import subprocess
 import sys
 from datetime import date, timedelta
+from io import StringIO
 from pathlib import Path
+from unittest import mock
+from urllib.error import URLError
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.management import CommandError, call_command
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -317,3 +321,124 @@ class ProdSettingsTests(TestCase):
         self.assertIn("healthcheck.railway.app", hosts)
         self.assertGreater(hsts, 0)
         self.assertLessEqual(body_cap, 64 * 1024)
+
+
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "apify_sample.json"
+IMPORT_URLOPEN = "reviews.management.commands.import_airbnb_reviews.urlopen"
+
+
+def apify_returns(payload):
+    """Patch urlopen so the command receives `payload` as the Apify response body."""
+    fake = mock.patch(IMPORT_URLOPEN)
+    urlopen = fake.start()
+    body = payload if isinstance(payload, bytes) else json.dumps(payload).encode()
+    urlopen.return_value.__enter__.return_value.read.return_value = body
+    return fake, urlopen
+
+
+def sample_items():
+    return json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+
+@mock.patch.dict(os.environ, {"APIFY_TOKEN": "test-token"})
+class ImportAirbnbReviewsTests(TestCase):
+    def run_import(self, payload):
+        fake, urlopen = apify_returns(payload)
+        self.addCleanup(fake.stop)
+        out = StringIO()
+        call_command("import_airbnb_reviews", stdout=out, stderr=StringIO())
+        return out.getvalue(), urlopen
+
+    def test_imports_new_reviews_published_with_airbnb_source(self):
+        out, _ = self.run_import(sample_items())
+        self.assertEqual(Review.objects.count(), 3)
+        self.assertTrue(all(r.is_approved and r.source == Review.Source.AIRBNB for r in Review.objects.all()))
+        dana = Review.objects.get(external_id="1100000000000000001")
+        self.assertEqual((dana.author_name, dana.stay_month, dana.stay_year), ("Dana", 8, 2026))
+        self.assertIn("fetched 3, created 3, skipped 0", out)
+
+    def test_numeric_id_stored_as_string(self):
+        self.run_import(sample_items())
+        self.assertTrue(Review.objects.filter(external_id="1100000000000000002").exists())
+
+    def test_second_run_creates_nothing(self):
+        self.run_import(sample_items())
+        out, _ = self.run_import(sample_items())
+        self.assertEqual(Review.objects.count(), 3)
+        self.assertIn("created 0, skipped 3", out)
+
+    def test_hidden_review_stays_hidden_after_reimport(self):
+        self.run_import(sample_items())
+        Review.objects.filter(external_id="1100000000000000001").update(is_approved=False)
+        self.run_import(sample_items())
+        self.assertFalse(Review.objects.get(external_id="1100000000000000001").is_approved)
+
+    def test_long_text_cut_to_1000_with_ellipsis(self):
+        item = dict(sample_items()[0], text="א" * 1500)
+        self.run_import([item])
+        text = Review.objects.get().text
+        self.assertEqual(len(text), 1000)
+        self.assertTrue(text.endswith("…"))
+
+    def test_long_name_cut_to_100(self):
+        item = dict(sample_items()[0], reviewer={"firstName": "ש" * 150})
+        self.run_import([item])
+        self.assertEqual(len(Review.objects.get().author_name), 100)
+
+    def test_unusable_items_skipped(self):
+        good = sample_items()[0]
+        items = [
+            good,
+            dict(good, id=None),
+            dict(good, id="no-text", text="   "),
+            "not-a-dict",
+        ]
+        out, _ = self.run_import(items)
+        self.assertEqual(list(Review.objects.values_list("external_id", flat=True)), ["1100000000000000001"])
+        self.assertIn("created 1, skipped 3", out)
+
+    def test_item_with_bad_date_skipped_others_imported(self):
+        good, other = sample_items()[:2]
+        self.run_import([dict(good, createdAt="yesterday"), other])
+        self.assertEqual(list(Review.objects.values_list("external_id", flat=True)), ["1100000000000000002"])
+
+    def test_duplicate_id_in_one_response_created_once(self):
+        item = sample_items()[0]
+        self.run_import([item, dict(item)])
+        self.assertEqual(Review.objects.count(), 1)
+
+    def test_empty_response_changes_nothing(self):
+        make_review(is_approved=True).save()
+        out, _ = self.run_import([])
+        self.assertEqual(Review.objects.count(), 1)
+        self.assertIn("fetched 0, created 0, skipped 0", out)
+
+    def test_apify_http_error_raises_and_saves_nothing(self):
+        fake = mock.patch(IMPORT_URLOPEN, side_effect=URLError("boom"))
+        fake.start()
+        self.addCleanup(fake.stop)
+        with self.assertRaises(CommandError):
+            call_command("import_airbnb_reviews", stdout=StringIO(), stderr=StringIO())
+        self.assertFalse(Review.objects.exists())
+
+    def test_invalid_json_raises_and_saves_nothing(self):
+        with self.assertRaises(CommandError):
+            self.run_import(b"<html>gateway error</html>")
+        self.assertFalse(Review.objects.exists())
+
+    def test_non_list_response_raises_and_saves_nothing(self):
+        with self.assertRaises(CommandError):
+            self.run_import({"error": {"type": "run-failed"}})
+        self.assertFalse(Review.objects.exists())
+
+    def test_sends_token_as_header_and_listing_url_in_body(self):
+        _, urlopen = self.run_import([])
+        request = urlopen.call_args.args[0]
+        self.assertEqual(request.get_header("Authorization"), "Bearer test-token")
+        self.assertNotIn("test-token", request.full_url)
+        self.assertIn("1771157482793114563", request.data.decode())
+
+    @mock.patch.dict(os.environ, {"APIFY_TOKEN": ""})
+    def test_missing_token_raises_clear_error(self):
+        with self.assertRaisesMessage(CommandError, "APIFY_TOKEN"):
+            call_command("import_airbnb_reviews", stdout=StringIO(), stderr=StringIO())

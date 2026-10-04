@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1100000000000000001",
+    "text": "Lovely apartment, spotless and quiet. We will be back!",
+    "createdAt": "2026-08-14T10:21:00Z",
+    "reviewer": {"firstName": "Dana"}
+  },
+  {
+    "id": 1100000000000000002,
+    "text": "דירה מקסימה ומאובזרת, מארח זמין ונעים.",
+    "createdAt": "2026-07-02T18:05:00Z",
+    "reviewer": {"firstName": "יוסי"}
+  },
+  {
+    "id": "1100000000000000003",
+    "text": "Great place for families.",
+    "createdAt": "2026-05-20T08:00:00Z",
+    "reviewer": {"firstName": "Maria"}
+  }
+]

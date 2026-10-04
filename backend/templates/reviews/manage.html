@@ -37,7 +37,7 @@
     {% for r in group.list %}
       <article class="panel card{% if not r.is_approved %} pending{% endif %}">
         <h3>{{ r.author_name }}</h3>
-        <p class="meta">התארחו ב{{ r.stay_label }} · נשלח {{ r.created_at|date:"d.m.Y H:i" }}</p>
+        <p class="meta">{% if r.source == "airbnb" %}<strong>Airbnb</strong> · {% endif %}התארחו ב{{ r.stay_label }} · נשלח {{ r.created_at|date:"d.m.Y H:i" }}</p>
         <p class="text">{{ r.text }}</p>
         <form class="tools" method="post" action="{% url 'reviews:manage_action' r.pk %}">{% csrf_token %}
           {% if r.is_approved %}
@@ -45,7 +45,9 @@
           {% else %}
             <button class="btn btn-primary" name="action" value="approve">אישור ופרסום</button>
           {% endif %}
-          <button class="btn btn-danger" name="action" value="delete" onclick="return confirm('למחוק את ההמלצה לצמיתות?')">מחיקה</button>
+          {% if r.source != "airbnb" %}
+            <button class="btn btn-danger" name="action" value="delete" onclick="return confirm('למחוק את ההמלצה לצמיתות?')">מחיקה</button>
+          {% endif %}
         </form>
       </article>
     {% endfor %}

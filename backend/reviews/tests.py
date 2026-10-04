@@ -164,6 +164,28 @@ class ManagePanelTests(TestCase):
         self.review = make_review()
         self.review.save()
 
+    def make_airbnb(self):
+        review = make_review(text="ייבוא מאירבנבי מאושר", is_approved=True, source=Review.Source.AIRBNB, external_id="77")
+        review.save()
+        return review
+
+    def test_delete_on_airbnb_review_hides_it(self):
+        review = self.make_airbnb()
+        self.client.force_login(self.owner)
+        self.client.post(reverse("reviews:manage_action", args=[review.pk]), {"action": "delete"})
+        review.refresh_from_db()  # still exists, so the next import won't recreate it
+        self.assertFalse(review.is_approved)
+
+    def test_panel_labels_airbnb_and_offers_no_delete(self):
+        review = self.make_airbnb()
+        self.client.force_login(self.owner)
+        html = self.client.get(reverse("reviews:manage")).content.decode()
+        start = html.rindex("<article", 0, html.index(review.text))
+        card = html[start : html.index("</article>", start)]
+        self.assertIn("Airbnb", card)
+        self.assertNotIn('value="delete"', card)
+        self.assertIn('value="delete"', html)  # the site review still has its delete button
+
     def test_anonymous_redirected_to_themed_login(self):
         response = self.client.get(reverse("reviews:manage"))
         self.assertRedirects(response, "/reviews/manage/login/?next=/reviews/manage/", fetch_redirect_response=False)
@@ -221,6 +243,21 @@ class ManagePanelTests(TestCase):
         self.client.force_login(self.owner)
         self.client.post(reverse("reviews:manage_logout"))
         self.assertEqual(self.client.get(reverse("reviews:manage")).status_code, 302)
+
+
+class ReviewAdminTests(TestCase):
+    def test_admin_cannot_delete_airbnb_review(self):
+        from django.contrib.admin.sites import site
+
+        admin = site._registry[Review]
+        owner = get_user_model().objects.create_superuser("root", password="pw-root-123")
+        request = mock.Mock(user=owner)
+        airbnb = make_review(source=Review.Source.AIRBNB, external_id="9")
+        airbnb.save()
+        site_review = make_review()
+        site_review.save()
+        self.assertFalse(admin.has_delete_permission(request, airbnb))
+        self.assertTrue(admin.has_delete_permission(request, site_review))
 
 
 class AbuseLimitTests(TestCase):

@@ -101,6 +101,8 @@ def manage(request):
 def manage_action(request, pk):
     review = get_object_or_404(Review, pk=pk)
     action = request.POST.get("action")
+    if action == "delete" and review.source == Review.Source.AIRBNB:
+        action = "hide"  # a deleted import would come back on the next daily run
     if action == "delete":
         review.delete()
     elif action in ("approve", "hide"):

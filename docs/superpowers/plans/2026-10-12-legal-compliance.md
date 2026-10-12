@@ -2,6 +2,12 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Resume prompt (paste into a new session):**
+
+```text
+Execute alma-beit-shean-site/docs/superpowers/plans/2026-10-12-legal-compliance.md with superpowers:executing-plans, starting at Task 0.
+```
+
 **Goal:** Close the Israeli legal gaps on alma-hosting.co.il (accessibility statement, privacy policy, terms, review-form consent, Airbnb import moderation, accessibility fixes, self-hosted fonts) so the owner is not exposed to accessibility or privacy suits.
 
 **Architecture:** The live site is static HTML in `site/` served by Cloudflare Workers (`wrangler.jsonc`, build gate `node check-links.js`). The review form and API are Django in `backend/` on Railway (`https://api.alma-hosting.co.il`). Legal pages are three new static HTML files in `site/` that reuse `site/styles.css`. Owner-specific facts go in as `{{OWNER_...}}` tokens, and the build gate refuses to deploy while any token remains.

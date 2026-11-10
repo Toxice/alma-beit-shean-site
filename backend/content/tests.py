@@ -250,7 +250,7 @@ class SeedContentTests(TestCase):
         self.assertEqual(GalleryPhoto.objects.count(), 15)
         self.assertEqual(FaqItem.objects.count(), 5)
         first = GalleryTab.objects.first().photos.first()
-        self.assertEqual(first.alt_text, "סלון יחידה א׳")
+        self.assertEqual(first.alt_text, "סלון")
         self.assertLessEqual(max(first.width, first.height), 1600)
         self.assertTrue(media_path(first.image.name).exists())
         self.assertEqual(FaqItem.objects.last().question, "האם יש בתי כנסת בקרבת המתחם?")

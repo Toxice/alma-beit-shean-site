@@ -240,6 +240,9 @@ main > section.wrap + section.wrap{border-top:1px solid var(--line);}
 .cta-band .hero-ctas{justify-content:center;}
 .cta-band .btn-ghost{background:var(--surface);color:var(--ink-strong);border-color:var(--line-strong);}
 .cta-band .btn-ghost:hover{border-color:var(--ink-strong);}
+.cta-band .cta-alt{font-size:.9rem;margin-top:1.1rem;}
+.cta-band .cta-alt a{color:inherit;text-decoration:underline;}
+.cta-band .cta-alt a:hover{color:var(--ink-strong);}
 
 /* ---------- footer ---------- */
 footer{

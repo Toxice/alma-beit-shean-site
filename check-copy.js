@@ -16,5 +16,10 @@ if ((html.match(/4 יחידות אירוח/g) || []).length < 2) errors.push('in
 if (!html.includes("<strong>4</strong>")) errors.push("index.html: facts band missing <strong>4</strong>");
 if (!files["backend/content/seed/content.json"].includes("4 יחידות אירוח זהות")) errors.push("content.json: FAQ answer missing 4 units");
 
+const bk = "https://www.booking.com/hotel/il/mtkhm-ykhydvt-yrvkh-lmh.he.html";
+const bkLinks = html.match(new RegExp('<a [^>]*href="' + bk.replace(/[.]/g, "\.") + '"[^>]*>', "g")) || [];
+if (bkLinks.length !== 1 || !/target="_blank"/.test(bkLinks[0]) || !/rel="noopener"/.test(bkLinks[0])) errors.push("index.html: need exactly one Booking.com link with target=_blank rel=noopener");
+if (/class="btn[^"]*"[^>]*>[^<]*(Booking|Airbnb)/i.test(html)) errors.push("index.html: Booking/Airbnb must not be a .btn button");
+
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
 console.log("OK: copy checks pass.");

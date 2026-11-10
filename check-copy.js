@@ -21,5 +21,17 @@ const bkLinks = html.match(new RegExp('<a [^>]*href="' + bk.replace(/[.]/g, "\."
 if (bkLinks.length !== 1 || !/target="_blank"/.test(bkLinks[0]) || !/rel="noopener"/.test(bkLinks[0])) errors.push("index.html: need exactly one Booking.com link with target=_blank rel=noopener");
 if (/class="btn[^"]*"[^>]*>[^<]*(Booking|Airbnb)/i.test(html)) errors.push("index.html: Booking/Airbnb must not be a .btn button");
 
+// cancellation policy: FAQ item in page and seed, answer has intro + six numbered rules
+const q = "מה מדיניות הביטול?";
+if (!html.includes(q)) errors.push("index.html: missing cancellation FAQ question");
+const seed = JSON.parse(files["backend/content/seed/content.json"]);
+const cx = seed.faq.find((i) => i.q === q);
+if (!cx) errors.push("content.json: missing cancellation FAQ item");
+else {
+  const rules = cx.a.split("\n").filter((l) => /^[1-6]\. /.test(l));
+  if (rules.length !== 6) errors.push("content.json: cancellation answer needs six numbered rules, found " + rules.length);
+  if (cx.a.length > 1000) errors.push("content.json: cancellation answer over 1000 chars");
+}
+
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
 console.log("OK: copy checks pass.");

@@ -248,7 +248,7 @@ class SeedContentTests(TestCase):
             ["פנים הבית", "חדרי שינה", "חדרי רחצה", "בחוץ"],
         )
         self.assertEqual(GalleryPhoto.objects.count(), 15)
-        self.assertEqual(FaqItem.objects.count(), 5)
+        self.assertEqual(FaqItem.objects.count(), 6)
         first = GalleryTab.objects.first().photos.first()
         self.assertEqual(first.alt_text, "סלון")
         self.assertLessEqual(max(first.width, first.height), 1600)
@@ -260,7 +260,7 @@ class SeedContentTests(TestCase):
         names = sorted(GalleryPhoto.objects.values_list("image", flat=True))
         self.assertIn("already seeded", self.seed())
         self.assertEqual(sorted(GalleryPhoto.objects.values_list("image", flat=True)), names)
-        self.assertEqual(FaqItem.objects.count(), 5)
+        self.assertEqual(FaqItem.objects.count(), 6)
 
     def test_skips_when_owner_already_added_content(self):
         FaqItem.objects.create(question="שאלה של הבעלים?", answer="תשובה")
